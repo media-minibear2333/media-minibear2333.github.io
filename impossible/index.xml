@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Impossibles on Go语言精进之路</title><link>https://golang.coding3min.com/impossible/</link><description>Recent content in Impossibles on Go语言精进之路</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://golang.coding3min.com/impossible/index.xml" rel="self" type="application/rss+xml"/><item><title/><link>https://golang.coding3min.com/impossible/range/readme/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://golang.coding3min.com/impossible/range/readme/</guid><description>for range的一个坑 # for range是值拷贝出来的副本
+在使用for range的时候，要注意的是，不管是slice还是map，循环的值都是被range值拷贝出来的副本值。 举个简单的例了
+对于list
+var t []Test t = append(t, Test{Index: 1, Num: 1}) t = append(t, Test{Index: 2, Num: 2}) // 实际上没有成功修改t.Num，因为是副本复制 for _, v := range t { v.Num += 100 } for _, v := range t { // 输出 // 1 1 // 2 2 fmt.Println(v.Index, v.Num) } 对于 map, 也不能这么搞，实际上都是复制
+m := make(map[int]Test) m[0] = Test{Index: 1, Num: 1} m[1] = Test{Index: 2, Num: 2} for _, v := range m { v.</description></item><item><title/><link>https://golang.coding3min.com/impossible/%E5%88%9D%E5%AD%A6%E8%80%85%E5%B8%B8%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://golang.coding3min.com/impossible/%E5%88%9D%E5%AD%A6%E8%80%85%E5%B8%B8%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</guid><description>初学者常犯的错误 # 引用： Go 经典译文：50 个 Go 新手易犯的错误（2020版）
+索引运算符和字符串 # 字符串上的 index 方法 （运算符） 返回一个字节值，而不是一个字符类型（就像在其他语言中一样）。
+package main import &amp;#34;fmt&amp;#34; func main() { x := &amp;#34;text&amp;#34; fmt.Println(x[0]) //print 116 fmt.Printf(&amp;#34;%T&amp;#34;,x[0]) //prints uint8 } 如果需要访问特定字符串 “characters”（unicode 代码点 / 运行符），请使用 for range 语句。官方的 “unicode/utf8” 包和基础的 utf8string 包 （golang.org/x/exp/utf8string） 也很有用。utf8string 包有一个方便的 At() 方法，将字符串转换为切片也是一种选择。
+使用 「for range」子句遍历 Map # level：初学者 如果你希望 Map 每项数据按照顺序排列 （例如，按键值顺序），这是不可能的，每次 Map 迭代会输出不一样的结果。GO 运行时可能会随机分配迭代顺序，因此你可能会得到几次相同的 Map 迭代结果也不用惊讶。</description></item><item><title/><link>https://golang.coding3min.com/impossible/%E6%96%B0%E6%89%8B%E5%B8%B8%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://golang.coding3min.com/impossible/%E6%96%B0%E6%89%8B%E5%B8%B8%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</guid><description>新手常犯的错误 # 引用： Go 经典译文：50 个 Go 新手易犯的错误（2020版）
+花括号不能放在单独的一行 # 大多数使用花括号的语言中，你可以选择放置花括号的位置。 但 Go 不一样。 Go 在编译时会自动注入分号，花括号单独一行会导致分号注入错误（无需自己书写分号）。 所以 Go 其实是有分号的
+错误的范例:
+package main import &amp;#34;fmt&amp;#34; func main() { // 错误，不能将左大括号放在单独的行上 fmt.Println(&amp;#34;hello there!&amp;#34;) } 编译错误:
+/tmp/sandbox826898458/main.go:6: 语法错误: { 前出现意外的分号或者新的一行
+正确的写法:
+package main import &amp;#34;fmt&amp;#34; func main() { fmt.Println(&amp;#34;works!&amp;#34;) } 未使用的变量 # 如果存在未使用的变量会导致编译失败。但是有一个例外， 只有在函数内部声明的变量未使用才会导致报错，如果你有未使用的全局变量是没问题的，也可以存在未使用的函数参数。
+如果给变量赋值但是没有使用该变量值，你的代码仍将无法编译。你需要以某种方式使用变量值以使编译器通过。
+错误的范例：
+package main var gvar int //not an error func main() { var one int //error, unused variable two := 2 //error, unused variable var three int //error, even though it&amp;#39;s assigned 3 on the next line three = 3 func(unused string) { fmt.</description></item><item><title/><link>https://golang.coding3min.com/impossible/%E8%BF%9B%E9%98%B6%E5%B8%B8%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://golang.coding3min.com/impossible/%E8%BF%9B%E9%98%B6%E5%B8%B8%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/</guid><description>进阶常犯的错误 # 引用： Go 经典译文：50 个 Go 新手易犯的错误（2020版）
+关闭 HTTP 响应 Body # 级别：中级 当使用 net/http 库发送 http 请求时，会返回一个 *http.Respose 变量。 如果你不读取响应 Body，依然需要关闭这个 Body。 注意对于空 Body 也必须关闭。 对于 GO 程序员新手很容易忘记这点。
+一些 GO 程序员新手尝试关闭响应 Body，但他们在错误的位置进行了关闭 Body。
+package main import ( &amp;#34;fmt&amp;#34; &amp;#34;net/http&amp;#34; &amp;#34;io/ioutil&amp;#34; ) func main() { resp, err := http.Get(&amp;#34;https://api.ipify.org?format=json&amp;#34;) defer resp.Body.Close()//错误的方法 if err != nil { fmt.Println(err) return } body, err := ioutil.</description></item></channel></rss>

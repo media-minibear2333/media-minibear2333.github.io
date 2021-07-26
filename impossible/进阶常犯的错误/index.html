@@ -1,0 +1,1484 @@
+<!doctype html><html lang=en dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="进阶常犯的错误 #   引用： Go 经典译文：50 个 Go 新手易犯的错误（2020版）
+ 关闭 HTTP 响应 Body #   级别：中级  当使用 net/http 库发送 http 请求时，会返回一个 *http.Respose 变量。 如果你不读取响应 Body，依然需要关闭这个 Body。 注意对于空 Body 也必须关闭。 对于 GO 程序员新手很容易忘记这点。
+一些 GO 程序员新手尝试关闭响应 Body，但他们在错误的位置进行了关闭 Body。
+package main import ( &#34;fmt&#34; &#34;net/http&#34; &#34;io/ioutil&#34; ) func main() { resp, err := http.Get(&#34;https://api.ipify.org?format=json&#34;) defer resp.Body.Close()//错误的方法  if err != nil { fmt.Println(err) return } body, err := ioutil."><meta name=theme-color content="#FFFFFF"><meta property="og:title" content><meta property="og:description" content="进阶常犯的错误 #   引用： Go 经典译文：50 个 Go 新手易犯的错误（2020版）
+ 关闭 HTTP 响应 Body #   级别：中级  当使用 net/http 库发送 http 请求时，会返回一个 *http.Respose 变量。 如果你不读取响应 Body，依然需要关闭这个 Body。 注意对于空 Body 也必须关闭。 对于 GO 程序员新手很容易忘记这点。
+一些 GO 程序员新手尝试关闭响应 Body，但他们在错误的位置进行了关闭 Body。
+package main import ( &#34;fmt&#34; &#34;net/http&#34; &#34;io/ioutil&#34; ) func main() { resp, err := http.Get(&#34;https://api.ipify.org?format=json&#34;) defer resp.Body.Close()//错误的方法  if err != nil { fmt.Println(err) return } body, err := ioutil."><meta property="og:type" content="article"><meta property="og:url" content="https://golang.coding3min.com/impossible/%E8%BF%9B%E9%98%B6%E5%B8%B8%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/"><meta property="article:section" content="impossible"><title>进阶常犯的错误 | Go语言精进之路</title><link rel=manifest href=/manifest.json><link rel=icon href=/favicon.png type=image/x-icon><link rel=stylesheet href=/book.min.958cea7827621d6fbcb3acf091344c3e44e3d2a9428f9c3c38bb9eb37bf8c45d.css integrity="sha256-lYzqeCdiHW+8s6zwkTRMPkTj0qlCj5w8OLues3v4xF0=" crossorigin=anonymous><script defer src=/flexsearch.min.js></script><script defer src=/en.search.min.97d6fd8434748d9af01ffa8b1456ffbaffb5e5f41fd27203ca2eb6697f051143.js integrity="sha256-l9b9hDR0jZrwH/qLFFb/uv+15fQf0nIDyi62aX8FEUM=" crossorigin=anonymous></script><script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a href=/><img src=/logo.png alt=Logo><span>Go语言精进之路</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><a href=https://coding3min.com>机智的程序员小熊</a></li><li><a href=https://github.com/minibear2333/>GitHub</a></li><li><a href=/qrcode/>微信公众号</a></li><li><strong>帮助与提示</strong><ul><li><a href=/howtocontribute/>0.0 如何参与贡献</a></li><li><a href=/books-share/>0.1 书籍推荐</a></li></ul></li><li><strong>第一章、Go基础</strong><ul><li><a href=/1.base/1-1-install-download/>1.1 安装与下载</a></li><li><a href=/1.base/1-2-hello-world/>1.2 跑起来</a></li><li><a href=/1.base/1-3-go-mod/>1.3 go mod最佳实践</a></li><li><a href=/1.base/1-4-variables/>1.4 变量与常量</a></li><li><a href=/1.base/1-5-switch%E5%92%8Ctypeswitch/>1.5 switch和type switch</a></li><li><a href=/1.base/1-6-for-range/>1.6 循环</a></li><li><a href=/1.base/1-7-range%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/>1.7 range深度解析</a></li></ul></li><li><strong>第二章、函数和容器</strong><ul><li><a href=/2.func-containers/2-1-func/>2.1 函数简单使用和基本知识解析</a></li><li><a href=/2.func-containers/2-2-%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0%E5%92%8C%E9%97%AD%E5%8C%85/>2.2 匿名函数和闭包</a></li><li><a href=/2.func-containers/2-3-%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0/>2.3 可变参数</a></li><li><a href=/2.func-containers/2-4-map/>2.4 集合（map）</a></li><li><a href=/2.func-containers/2-5-%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%87%E7%89%87/>2.5 数组和切片</a></li></ul></li><li><strong>第三章、语法进阶</strong><ul><li><a href=/3.grammar-advancement/3-1-point/>3.1 指针讨论</a></li><li><a href=/3.grammar-advancement/3-2-struct/>3.2 结构体</a></li><li><a href=/3.grammar-advancement/3-3-%E6%8E%A5%E5%8F%A3%E4%B8%8E%E5%A4%9A%E6%80%81/>3.3 接口与多态</a></li><li><a href=/3.grammar-advancement/3-4-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/>3.4 异常处理</a></li></ul></li><li><strong>第四章、并发和并行</strong><ul><li><a href=/4.concurrent/4-1-go%E8%AF%AD%E8%A8%80%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E7%89%B9%E6%80%A7/>4.1 并发特性</a></li><li><a href=/4.concurrent/4-2-goroutine-wait/>4.2 并发等待</a></li><li><a href=/4.concurrent/4-3-channel/>4.3 channel</a></li><li><a href=/4.concurrent/4-4-deadlock/>4.4 deadlock</a></li><li><a href=/4.concurrent/4-5-select/>4.5 select</a></li><li><a href=/4.concurrent/4-6-timeout/>4.6 设置超时</a></li><li>-并发安全</li><li>-协程池</li><li>-消费者生产者框架</li><li>-GMP调度原理</li></ul></li><li><strong>第五章、标准库</strong><ul><li><a href=/%E7%95%AA%E5%A4%96.%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/go%E4%BB%A3%E7%A0%81%E5%9F%BA%E6%9C%AC%E6%A0%87%E5%87%86%E8%A7%84%E8%8C%83/>Go代码基本标准规范</a></li><li><a href=/%E7%95%AA%E5%A4%96.%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/go%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E5%A4%A7%E5%85%A8/>文件操作</a></li><li><a href=/%E7%95%AA%E5%A4%96.%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/%E5%88%87%E7%89%87%E6%8E%92%E5%BA%8Fsort%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/>排序</a></li><li><a href=/%E7%95%AA%E5%A4%96.%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/flag%E5%8C%85%E8%AF%BB%E5%8F%96%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%85%8D%E7%BD%AE/>命令行操作</a></li><li>-时间处理</li><li>-字符串处理</li><li>-json库</li><li>-http库</li><li>跨平台编译</li><li>模板</li></ul></li><li><strong>第六章、调试与测试</strong><ul><li>-单元测试</li><li>-基准测试</li><li>-mock</li><li>-自动化测试</li><li>-调试</li></ul></li><li><strong>第七章、性能调优</strong><ul><li>-cpu调度</li><li>-内存管理</li><li>-垃圾回收</li><li>-PProf</li><li>-逃逸分析</li><li>-链路追踪</li><li>-自监控</li></ul></li><li><strong>第八章、反射</strong></li><li><strong>第九章、优秀开源组件</strong><ul><li>-日志</li><li>-配置管理</li><li>-接口文档</li><li>-错误码控制</li><li>-数据库连接</li><li>-为开源项目贡献代码</li></ul></li><li><strong>第十章、分布式系统</strong><ul><li>-分布式ID生成器</li><li>-分布式锁</li><li>-分布式一致性算法</li></ul></li><li><strong>第x章、web应用</strong><ul><li>-GRPC</li><li>-Protobuf</li></ul></li><li><strong>第x章、微服务</strong></li><li><strong>第x章、服务治理</strong></li><li><strong>第x章、GO语言版本分析</strong></li><li><strong>第x章、Go语言工程化实践</strong><ul><li>构建约束</li></ul></li><li><strong>番外1、拓展应用</strong><ul><li><a href=/tools/readme/>小工具</a></li><li><a href=/%E7%95%AA%E5%A4%96.%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/golang%E6%89%93%E9%95%9C%E5%83%8Fdockerfile%E7%9A%84%E5%86%99%E6%B3%95/>Go与Dockerfile</a></li></ul></li><li><strong>番外2、陷阱与缺陷</strong><ul><li><a href=/impossible/range/readme/>range的第二个值实际上是值拷贝</a></li><li><a href=/impossible/%E6%96%B0%E6%89%8B%E5%B8%B8%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/>新手常犯的错误</a></li><li><a href=/impossible/%E5%88%9D%E5%AD%A6%E8%80%85%E5%B8%B8%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/>初学者常犯的错误</a></li><li><a href=/impossible/%E8%BF%9B%E9%98%B6%E5%B8%B8%E7%8A%AF%E7%9A%84%E9%94%99%E8%AF%AF/ class=active>进阶常犯的错误</a></li></ul></li></ul></nav><script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu></label>
+<strong>进阶常犯的错误</strong>
+<label for=toc-control><img src=/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#关闭-http-响应-body>关闭 HTTP 响应 Body</a></li><li><a href=#关闭-http-连接>关闭 HTTP 连接</a></li><li><a href=#json-编码器添加换行符>JSON 编码器添加换行符</a></li><li><a href=#json-包在键和字符串值中转义特殊的-html-字符>JSON 包在键和字符串值中转义特殊的 HTML 字符</a></li><li><a href=#将-json-数字解组为接口值>将 JSON 数字解组为接口值</a></li><li><a href=#十六进制或其他非-utf8json-字符串转义的值不正确>十六进制或其他非 UTF8JSON 字符串转义的值不正确</a></li><li><a href=#比较结构体--数组--切片--map>比较结构体 / 数组 / 切片 / Map</a></li><li><a href=#从-panic-中恢复>从 Panic 中恢复</a></li><li><a href=#使用或更新切片--数组--map-rnage-遍历的数据>使用或更新切片 / 数组 / Map Rnage 遍历的数据</a></li><li><a href=#切片的隐藏数据>切片的隐藏数据</a></li><li><a href=#切片数据污染>切片数据污染</a></li><li><a href=#旧的切片>旧的切片</a></li><li><a href=#类型声明和方法>类型声明和方法</a></li><li><a href=#突破-for-switch-和--for-select-代码块>突破 “for switch” 和 “ for select” 代码块</a></li><li><a href=#句中的迭代变量和闭包>句中的迭代变量和闭包</a></li><li><a href=#延迟函数调用参数评估>延迟函数调用参数评估</a></li><li><a href=#延迟函数调用执行>延迟函数调用执行</a></li><li><a href=#失败类型断言>失败类型断言</a></li><li><a href=#阻塞的-goroutines-和资源泄漏>阻塞的 Goroutines 和资源泄漏</a></li><li><a href=#相同地址的不同零大小变量>相同地址的不同零大小变量</a></li><li><a href=#iota-的第一次使用并不总是从零开始>iota 的第一次使用并不总是从零开始</a></li><li><a href=#在值实例上使用指针接收器方法>在值实例上使用指针接收器方法</a></li><li><a href=#更新-map-值字段>更新 map 值字段</a></li><li><a href=#nil接口和nil接口值>「nil」接口和「nil」接口值</a></li><li><a href=#堆栈和堆变量>堆栈和堆变量</a></li><li><a href=#gomaxprocs并发和并行>GOMAXPROCS，并发和并行</a></li><li><a href=#读写操作重新排序>读写操作重新排序</a></li><li><a href=#抢占式调度>抢占式调度</a></li><li><a href=#导入-c-和多行导入块>导入 C 和多行导入块</a></li><li><a href=#在-c-和-cgo-注释之间不要有空白行>在 C 和 Cgo 注释之间不要有空白行</a></li><li><a href=#不能调用带有可变参数的-c-函数>不能调用带有可变参数的 C 函数</a></li></ul></nav></aside></header><article class=markdown><h1 id=进阶常犯的错误>进阶常犯的错误
+<a class=anchor href=#%e8%bf%9b%e9%98%b6%e5%b8%b8%e7%8a%af%e7%9a%84%e9%94%99%e8%af%af>#</a></h1><blockquote><p>引用：
+<a href=https://learnku.com/go/wikis/49781>Go 经典译文：50 个 Go 新手易犯的错误（2020版）</a></p></blockquote><h2 id=关闭-http-响应-body>关闭 HTTP 响应 Body
+<a class=anchor href=#%e5%85%b3%e9%97%ad-http-%e5%93%8d%e5%ba%94-body>#</a></h2><ul><li>级别：中级</li></ul><p>当使用 <code>net/http</code> 库发送 http 请求时，会返回一个 <code>*http.Respose</code> 变量。 如果你不读取响应 Body，依然需要关闭这个 Body。 注意对于空 Body 也必须关闭。 对于 GO 程序员新手很容易忘记这点。</p><p>一些 GO 程序员新手尝试关闭响应 Body，但他们在错误的位置进行了关闭 Body。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;net/http&#34;</span>
+    <span style=color:#e6db74>&#34;io/ioutil&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>resp</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>Get</span>(<span style=color:#e6db74>&#34;https://api.ipify.org?format=json&#34;</span>)
+    <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>resp</span>.<span style=color:#a6e22e>Body</span>.<span style=color:#a6e22e>Close</span>()<span style=color:#75715e>//错误的方法
+</span><span style=color:#75715e></span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>err</span>)
+        <span style=color:#66d9ef>return</span>
+    }
+
+    <span style=color:#a6e22e>body</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>ioutil</span>.<span style=color:#a6e22e>ReadAll</span>(<span style=color:#a6e22e>resp</span>.<span style=color:#a6e22e>Body</span>)
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>err</span>)
+        <span style=color:#66d9ef>return</span>
+    }
+
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(string(<span style=color:#a6e22e>body</span>))
+}
+</code></pre></div><p>这种方法适合请求成功的情况，但是如果 http 请求失败，则 <code>resp</code> 变量可能为 <code>nil</code>，这将导致运行触发 <code>panic</code>。</p><p>关闭 http 响应 Body 的最常见方法，应该是在 http 响应检查错误之后使用 <code>defer</code> 调用 <code>Close</code> 方法。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;net/http&#34;</span>
+    <span style=color:#e6db74>&#34;io/ioutil&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>resp</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>Get</span>(<span style=color:#e6db74>&#34;https://api.ipify.org?format=json&#34;</span>)
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>err</span>)
+        <span style=color:#66d9ef>return</span>
+    }
+
+    <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>resp</span>.<span style=color:#a6e22e>Body</span>.<span style=color:#a6e22e>Close</span>()<span style=color:#75715e>//ok, most of the time :-)
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>body</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>ioutil</span>.<span style=color:#a6e22e>ReadAll</span>(<span style=color:#a6e22e>resp</span>.<span style=color:#a6e22e>Body</span>)
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>err</span>)
+        <span style=color:#66d9ef>return</span>
+    }
+
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(string(<span style=color:#a6e22e>body</span>))
+}
+</code></pre></div><p>在大多数情况下，当 http 请求失败时，<code>resp</code> 变量将为 <code>nil</code>，而 <code>err</code> 变量将为非空。 但是当重定向失败时，两个变量都将为非空。 这意味着 Body 仍然可能会未关闭而导致泄漏。</p><p>你可以通过在 http 响应错误处理时，添加一段关闭非空响应 Body 的代码这解决这个问题 （重定向时响应和 err 都是非空，检查了 err 返回错误而没有关闭 Body）， 使用一个 <code>defer</code> 关闭所有失败和成功请求的响应 Body。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;net/http&#34;</span>
+    <span style=color:#e6db74>&#34;io/ioutil&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>resp</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>Get</span>(<span style=color:#e6db74>&#34;https://api.ipify.org?format=json&#34;</span>)
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>resp</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>resp</span>.<span style=color:#a6e22e>Body</span>.<span style=color:#a6e22e>Close</span>()
+    }
+
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>err</span>)
+        <span style=color:#66d9ef>return</span>
+    }
+
+    <span style=color:#a6e22e>body</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>ioutil</span>.<span style=color:#a6e22e>ReadAll</span>(<span style=color:#a6e22e>resp</span>.<span style=color:#a6e22e>Body</span>)
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>err</span>)
+        <span style=color:#66d9ef>return</span>
+    }
+
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(string(<span style=color:#a6e22e>body</span>))
+}
+</code></pre></div><p><code>resp.Body.Close()</code> 方法的底层实现是读取并丢弃响应 Body 的剩余数据。 这样可以保证使用了 <code>keepalive http</code> 长连接机制，可以将 http 连接复用，用来发送另外一个请求。 在最新的 http 客户端处理方法是不同的。 但是现在你需要读取并丢弃其余的响应数据。 如果你不读取并丢弃剩余数据，那么 http 连接可能会关闭而不是被长连接复用。 这个小陷阱应该记录在 Go 1.5 中。</p><p>如果复用 http 长连接对于你的程序很重要，那么可能需要在响应处理逻辑的末尾添加以下内容：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a6e22e>_</span>, <span style=color:#a6e22e>err</span> = <span style=color:#a6e22e>io</span>.<span style=color:#a6e22e>Copy</span>(<span style=color:#a6e22e>ioutil</span>.<span style=color:#a6e22e>Discard</span>, <span style=color:#a6e22e>resp</span>.<span style=color:#a6e22e>Body</span>)  
+</code></pre></div><p>如果你没有读取全部响应 Body，则需要这样丢弃数据，如果使用以下代码处理 json API 响应，json 库只读取了部分 Body 就完成了 json 对象解析，未读取完毕 Body，则可能会发生这种情况：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>NewDecoder</span>(<span style=color:#a6e22e>resp</span>.<span style=color:#a6e22e>Body</span>).<span style=color:#a6e22e>Decode</span>(<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>data</span>)  
+</code></pre></div><h2 id=关闭-http-连接>关闭 HTTP 连接
+<a class=anchor href=#%e5%85%b3%e9%97%ad-http-%e8%bf%9e%e6%8e%a5>#</a></h2><ul><li>级别：中级</li></ul><p>某些 HTTP 服务器会打开长连接（基于 HTTP/1.1 规范和服务器的 <code>Keepalive</code> 机制）。 在默认情况下，net/http 库客户端在收到 HTTP 服务端要求关闭时，才会关闭长连接。 这意味着程序在某些情况下没有关闭长连接，可能会泄露系统 fd，用完操作系统的套接字 / 文件描述符。</p><p>你可以在请求发送前将 <code>*http.Requsst</code> 对象的 <code>Close</code> 字段设置为 <code>true</code>, 用于关闭 net/http 库客户端连接。</p><p>另一种方法是添加 <code>Connection</code> Header 并设置值为 <code>close</code>。目标 HTTP 服务器响应也应该返回 Header <code>Connection：close</code>。当 net/http 库客户端看到这个 Header 时，它也会关闭连接。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;net/http&#34;</span>
+    <span style=color:#e6db74>&#34;io/ioutil&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>req</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>NewRequest</span>(<span style=color:#e6db74>&#34;GET&#34;</span>,<span style=color:#e6db74>&#34;http://golang.org&#34;</span>,<span style=color:#66d9ef>nil</span>)
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>err</span>)
+        <span style=color:#66d9ef>return</span>
+    }
+
+    <span style=color:#a6e22e>req</span>.<span style=color:#a6e22e>Close</span> = <span style=color:#66d9ef>true</span>
+    <span style=color:#75715e>// 或者使用下面的这行方法:
+</span><span style=color:#75715e></span>    <span style=color:#75715e>//req.Header.Add(&#34;Connection&#34;, &#34;close&#34;)
+</span><span style=color:#75715e></span>
+    <span style=color:#a6e22e>resp</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>DefaultClient</span>.<span style=color:#a6e22e>Do</span>(<span style=color:#a6e22e>req</span>)
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>resp</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>resp</span>.<span style=color:#a6e22e>Body</span>.<span style=color:#a6e22e>Close</span>()
+    }
+
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>err</span>)
+        <span style=color:#66d9ef>return</span>
+    }
+
+    <span style=color:#a6e22e>body</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>ioutil</span>.<span style=color:#a6e22e>ReadAll</span>(<span style=color:#a6e22e>resp</span>.<span style=color:#a6e22e>Body</span>)
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>err</span>)
+        <span style=color:#66d9ef>return</span>
+    }
+
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(len(string(<span style=color:#a6e22e>body</span>)))
+}
+</code></pre></div><p>你还可以在全局范围内禁用使用 HTTP 长连接 （KeepAlives），创建一个自定义使用的 <code>*http.Transport</code> 对象，用于发送 http 客户端的请求。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;net/http&#34;</span>
+    <span style=color:#e6db74>&#34;io/ioutil&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>tr</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>Transport</span>{<span style=color:#a6e22e>DisableKeepAlives</span>: <span style=color:#66d9ef>true</span>}
+    <span style=color:#a6e22e>client</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>Client</span>{<span style=color:#a6e22e>Transport</span>: <span style=color:#a6e22e>tr</span>}
+
+    <span style=color:#a6e22e>resp</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>client</span>.<span style=color:#a6e22e>Get</span>(<span style=color:#e6db74>&#34;http://golang.org&#34;</span>)
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>resp</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>resp</span>.<span style=color:#a6e22e>Body</span>.<span style=color:#a6e22e>Close</span>()
+    }
+
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>err</span>)
+        <span style=color:#66d9ef>return</span>
+    }
+
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>resp</span>.<span style=color:#a6e22e>StatusCode</span>)
+
+    <span style=color:#a6e22e>body</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>ioutil</span>.<span style=color:#a6e22e>ReadAll</span>(<span style=color:#a6e22e>resp</span>.<span style=color:#a6e22e>Body</span>)
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>err</span>)
+        <span style=color:#66d9ef>return</span>
+    }
+
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(len(string(<span style=color:#a6e22e>body</span>)))
+}
+</code></pre></div><p>如果你同时向一个 http 服务器发送大量请求，则可以打开 KeepAlives 选项使用长连接。但是如果你在应用是短时间内，向不同的 HTTP 服务器发送一两个请求 （少量请求），那么则最好在收到 http 响应后立刻关闭网络连，设置更大的操作系统打开文件句柄数量是一个好方法 （ulimit -n）。正确的解决方法取决于你的应用程序。</p><h2 id=json-编码器添加换行符>JSON 编码器添加换行符
+<a class=anchor href=#json-%e7%bc%96%e7%a0%81%e5%99%a8%e6%b7%bb%e5%8a%a0%e6%8d%a2%e8%a1%8c%e7%ac%a6>#</a></h2><ul><li>级别：中级</li></ul><p>你发现你为 JSON 编码功能编写的测试由于未获得期望值而导致测试失败，为什么会这样？如果你是用的是 JSON 编码器对象，则在编码的 JSON 对象的末尾将获得一个额外的换行符。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (
+  <span style=color:#e6db74>&#34;fmt&#34;</span>
+  <span style=color:#e6db74>&#34;encoding/json&#34;</span>
+  <span style=color:#e6db74>&#34;bytes&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+  <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>int</span>{<span style=color:#e6db74>&#34;key&#34;</span>: <span style=color:#ae81ff>1</span>}
+
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>b</span> <span style=color:#a6e22e>bytes</span>.<span style=color:#a6e22e>Buffer</span>
+  <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>NewEncoder</span>(<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>b</span>).<span style=color:#a6e22e>Encode</span>(<span style=color:#a6e22e>data</span>)
+
+  <span style=color:#a6e22e>raw</span>,<span style=color:#a6e22e>_</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>Marshal</span>(<span style=color:#a6e22e>data</span>)
+
+  <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>String</span>() <span style=color:#f92672>==</span> string(<span style=color:#a6e22e>raw</span>) {
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;same encoded data&#34;</span>)
+  } <span style=color:#66d9ef>else</span> {
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;&#39;%s&#39; != &#39;%s&#39;\n&#34;</span>,<span style=color:#a6e22e>raw</span>,<span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>String</span>())
+    <span style=color:#75715e>//prints:
+</span><span style=color:#75715e></span>    <span style=color:#75715e>//&#39;{&#34;key&#34;:1}&#39; != &#39;{&#34;key&#34;:1}\n&#39;
+</span><span style=color:#75715e></span>  }
+}
+</code></pre></div><p>JSON 编码器对象旨在用于流传输。使用 JSON 进行流传输通常意味着用换行符分隔的 JSON 对象，这就是为什么 Encode 方法添加换行符的原因。这是正常的行为，但是通常被忽略或遗忘。</p><h2 id=json-包在键和字符串值中转义特殊的-html-字符>JSON 包在键和字符串值中转义特殊的 HTML 字符
+<a class=anchor href=#json-%e5%8c%85%e5%9c%a8%e9%94%ae%e5%92%8c%e5%ad%97%e7%ac%a6%e4%b8%b2%e5%80%bc%e4%b8%ad%e8%bd%ac%e4%b9%89%e7%89%b9%e6%ae%8a%e7%9a%84-html-%e5%ad%97%e7%ac%a6>#</a></h2><ul><li>级别：中级</li></ul><p>这是已记录的行为，但是你必须仔细阅读所有 JSON 包文档以了解有关情况。<code>SetEscapeHTML</code> 方法描述讨论了 and 字符 （小于和大于） 的默认编码行为。</p><p>由于许多原因，这是 Go 团队非常不幸的设计决定。首先，你不能为 <code>json.Marshal</code> 调用禁用此行为。其次，这是一个实施不当的安全功能，因为它假定执行 HTML 编码足以防止所有 Web 应用程序中的 XSS 漏洞。在许多可以使用数据的上下文中，每个上下文需要自己的编码方法。最后，这很糟糕，因为它假定 JSON 的主要用例是网页，默认情况下会破坏配置库和 REST / HTTP API。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (
+  <span style=color:#e6db74>&#34;fmt&#34;</span>
+  <span style=color:#e6db74>&#34;encoding/json&#34;</span>
+  <span style=color:#e6db74>&#34;bytes&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+  <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> <span style=color:#e6db74>&#34;x &lt; y&#34;</span>
+
+  <span style=color:#a6e22e>raw</span>,<span style=color:#a6e22e>_</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>Marshal</span>(<span style=color:#a6e22e>data</span>)
+  <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(string(<span style=color:#a6e22e>raw</span>))
+  <span style=color:#75715e>//prints: &#34;x \u003c y&#34; &lt;- probably not what you expected
+</span><span style=color:#75715e></span>
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>b1</span> <span style=color:#a6e22e>bytes</span>.<span style=color:#a6e22e>Buffer</span>
+  <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>NewEncoder</span>(<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>b1</span>).<span style=color:#a6e22e>Encode</span>(<span style=color:#a6e22e>data</span>)
+  <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>b1</span>.<span style=color:#a6e22e>String</span>())
+  <span style=color:#75715e>//prints: &#34;x \u003c y&#34; &lt;- probably not what you expected
+</span><span style=color:#75715e></span>
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>b2</span> <span style=color:#a6e22e>bytes</span>.<span style=color:#a6e22e>Buffer</span>
+  <span style=color:#a6e22e>enc</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>NewEncoder</span>(<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>b2</span>)
+  <span style=color:#a6e22e>enc</span>.<span style=color:#a6e22e>SetEscapeHTML</span>(<span style=color:#66d9ef>false</span>)
+  <span style=color:#a6e22e>enc</span>.<span style=color:#a6e22e>Encode</span>(<span style=color:#a6e22e>data</span>)
+  <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>b2</span>.<span style=color:#a6e22e>String</span>())
+  <span style=color:#75715e>//prints: &#34;x &lt; y&#34; &lt;- looks better
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>给 Go 团队的建议&mldr; 选择加入。</p><h2 id=将-json-数字解组为接口值>将 JSON 数字解组为接口值
+<a class=anchor href=#%e5%b0%86-json-%e6%95%b0%e5%ad%97%e8%a7%a3%e7%bb%84%e4%b8%ba%e6%8e%a5%e5%8f%a3%e5%80%bc>#</a></h2><ul><li>级别：中级</li></ul><p>默认情况下，当你将 JSON 数据解码 / 解组到接口中时，Go 会将 JSON 中的数字值视为 <code>float64</code> 数字。这意味着以下代码将因失败而失败：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+  <span style=color:#e6db74>&#34;encoding/json&#34;</span>
+  <span style=color:#e6db74>&#34;fmt&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>data</span> = []byte(<span style=color:#e6db74>`{&#34;status&#34;: 200}`</span>)
+
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>result</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>interface</span>{}
+  <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>Unmarshal</span>(<span style=color:#a6e22e>data</span>, <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>result</span>); <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;error:&#34;</span>, <span style=color:#a6e22e>err</span>)
+    <span style=color:#66d9ef>return</span>
+  }
+
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>status</span> = <span style=color:#a6e22e>result</span>[<span style=color:#e6db74>&#34;status&#34;</span>].(<span style=color:#66d9ef>int</span>) <span style=color:#75715e>//error
+</span><span style=color:#75715e></span>  <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;status value:&#34;</span>,<span style=color:#a6e22e>status</span>)
+}
+</code></pre></div><p>运行时 Panic:</p><blockquote><p>panic: 接口转换：接口是 float64，而不是 int</p></blockquote><p>如果你尝试解码的 JSON 值为整数，则可以使用服务器选项。</p><p>选项一：按原样使用 float 值</p><p>选项二：将浮点值转换为所需的整数类型。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+  <span style=color:#e6db74>&#34;encoding/json&#34;</span>
+  <span style=color:#e6db74>&#34;fmt&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>data</span> = []byte(<span style=color:#e6db74>`{&#34;status&#34;: 200}`</span>)
+
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>result</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>interface</span>{}
+  <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>Unmarshal</span>(<span style=color:#a6e22e>data</span>, <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>result</span>); <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;error:&#34;</span>, <span style=color:#a6e22e>err</span>)
+    <span style=color:#66d9ef>return</span>
+  }
+
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>status</span> = uint64(<span style=color:#a6e22e>result</span>[<span style=color:#e6db74>&#34;status&#34;</span>].(<span style=color:#66d9ef>float64</span>)) <span style=color:#75715e>//ok
+</span><span style=color:#75715e></span>  <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;status value:&#34;</span>,<span style=color:#a6e22e>status</span>)
+}
+</code></pre></div><p>选项三：使用 <code>Decoder</code> 类型解组 JSON，并使用 <code>Number</code> 接口类型告诉它表示 JSON 数字。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+  <span style=color:#e6db74>&#34;encoding/json&#34;</span>
+  <span style=color:#e6db74>&#34;bytes&#34;</span>
+  <span style=color:#e6db74>&#34;fmt&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>data</span> = []byte(<span style=color:#e6db74>`{&#34;status&#34;: 200}`</span>)
+
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>result</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>interface</span>{}
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>decoder</span> = <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>NewDecoder</span>(<span style=color:#a6e22e>bytes</span>.<span style=color:#a6e22e>NewReader</span>(<span style=color:#a6e22e>data</span>))
+  <span style=color:#a6e22e>decoder</span>.<span style=color:#a6e22e>UseNumber</span>()
+
+  <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>decoder</span>.<span style=color:#a6e22e>Decode</span>(<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>result</span>); <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;error:&#34;</span>, <span style=color:#a6e22e>err</span>)
+    <span style=color:#66d9ef>return</span>
+  }
+
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>status</span>,<span style=color:#a6e22e>_</span> = <span style=color:#a6e22e>result</span>[<span style=color:#e6db74>&#34;status&#34;</span>].(<span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>Number</span>).<span style=color:#a6e22e>Int64</span>() <span style=color:#75715e>//ok
+</span><span style=color:#75715e></span>  <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;status value:&#34;</span>,<span style=color:#a6e22e>status</span>)
+}
+</code></pre></div><p>你可以使用 <code>Number</code> 值的字符串表示形式将其解组为其他数字类型：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+  <span style=color:#e6db74>&#34;encoding/json&#34;</span>
+  <span style=color:#e6db74>&#34;bytes&#34;</span>
+  <span style=color:#e6db74>&#34;fmt&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>data</span> = []byte(<span style=color:#e6db74>`{&#34;status&#34;: 200}`</span>)
+
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>result</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>interface</span>{}
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>decoder</span> = <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>NewDecoder</span>(<span style=color:#a6e22e>bytes</span>.<span style=color:#a6e22e>NewReader</span>(<span style=color:#a6e22e>data</span>))
+  <span style=color:#a6e22e>decoder</span>.<span style=color:#a6e22e>UseNumber</span>()
+
+  <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>decoder</span>.<span style=color:#a6e22e>Decode</span>(<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>result</span>); <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;error:&#34;</span>, <span style=color:#a6e22e>err</span>)
+    <span style=color:#66d9ef>return</span>
+  }
+
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>status</span> <span style=color:#66d9ef>uint64</span>
+  <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>Unmarshal</span>([]byte(<span style=color:#a6e22e>result</span>[<span style=color:#e6db74>&#34;status&#34;</span>].(<span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>Number</span>).<span style=color:#a6e22e>String</span>()), <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>status</span>); <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;error:&#34;</span>, <span style=color:#a6e22e>err</span>)
+    <span style=color:#66d9ef>return</span>
+  }
+
+  <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;status value:&#34;</span>,<span style=color:#a6e22e>status</span>)
+}
+</code></pre></div><p>选项四：使用 <code>struct</code> 类型将你的数字值映射到所需的数字类型。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+  <span style=color:#e6db74>&#34;encoding/json&#34;</span>
+  <span style=color:#e6db74>&#34;bytes&#34;</span>
+  <span style=color:#e6db74>&#34;fmt&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>data</span> = []byte(<span style=color:#e6db74>`{&#34;status&#34;: 200}`</span>)
+
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>result</span> <span style=color:#66d9ef>struct</span> {
+    <span style=color:#a6e22e>Status</span> <span style=color:#66d9ef>uint64</span> <span style=color:#e6db74>`json:&#34;status&#34;`</span>
+  }
+
+  <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>NewDecoder</span>(<span style=color:#a6e22e>bytes</span>.<span style=color:#a6e22e>NewReader</span>(<span style=color:#a6e22e>data</span>)).<span style=color:#a6e22e>Decode</span>(<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>result</span>); <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;error:&#34;</span>, <span style=color:#a6e22e>err</span>)
+    <span style=color:#66d9ef>return</span>
+  }
+
+  <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;result =&gt; %+v&#34;</span>,<span style=color:#a6e22e>result</span>)
+  <span style=color:#75715e>//prints: result =&gt; {Status:200}
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>选项五：使用 <code>struct</code> 将你的数值映射到 <code>json.RawMessage</code> 类型，如果你需要延迟值解码。</p><p>如果你必须执行条件 JSON 字段解码 （其中字段类型或结构可能会更改），则此选项很有用。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+  <span style=color:#e6db74>&#34;encoding/json&#34;</span>
+  <span style=color:#e6db74>&#34;bytes&#34;</span>
+  <span style=color:#e6db74>&#34;fmt&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+  <span style=color:#a6e22e>records</span> <span style=color:#f92672>:=</span> [][]<span style=color:#66d9ef>byte</span>{
+    []byte(<span style=color:#e6db74>`{&#34;status&#34;: 200, &#34;tag&#34;:&#34;one&#34;}`</span>),
+    []byte(<span style=color:#e6db74>`{&#34;status&#34;:&#34;ok&#34;, &#34;tag&#34;:&#34;two&#34;}`</span>),
+  }
+
+  <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>idx</span>, <span style=color:#a6e22e>record</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>records</span> {
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>result</span> <span style=color:#66d9ef>struct</span> {
+      <span style=color:#a6e22e>StatusCode</span> <span style=color:#66d9ef>uint64</span>
+      <span style=color:#a6e22e>StatusName</span> <span style=color:#66d9ef>string</span>
+      <span style=color:#a6e22e>Status</span> <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>RawMessage</span> <span style=color:#e6db74>`json:&#34;status&#34;`</span>
+      <span style=color:#a6e22e>Tag</span> <span style=color:#66d9ef>string</span>             <span style=color:#e6db74>`json:&#34;tag&#34;`</span>
+    }
+
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>NewDecoder</span>(<span style=color:#a6e22e>bytes</span>.<span style=color:#a6e22e>NewReader</span>(<span style=color:#a6e22e>record</span>)).<span style=color:#a6e22e>Decode</span>(<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>result</span>); <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+      <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;error:&#34;</span>, <span style=color:#a6e22e>err</span>)
+      <span style=color:#66d9ef>return</span>
+    }
+
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>sstatus</span> <span style=color:#66d9ef>string</span>
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>Unmarshal</span>(<span style=color:#a6e22e>result</span>.<span style=color:#a6e22e>Status</span>, <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>sstatus</span>); <span style=color:#a6e22e>err</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>nil</span> {
+      <span style=color:#a6e22e>result</span>.<span style=color:#a6e22e>StatusName</span> = <span style=color:#a6e22e>sstatus</span>
+    }
+
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>nstatus</span> <span style=color:#66d9ef>uint64</span>
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>Unmarshal</span>(<span style=color:#a6e22e>result</span>.<span style=color:#a6e22e>Status</span>, <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>nstatus</span>); <span style=color:#a6e22e>err</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>nil</span> {
+      <span style=color:#a6e22e>result</span>.<span style=color:#a6e22e>StatusCode</span> = <span style=color:#a6e22e>nstatus</span>
+    }
+
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;[%v] result =&gt; %+v\n&#34;</span>,<span style=color:#a6e22e>idx</span>,<span style=color:#a6e22e>result</span>)
+  }
+}
+</code></pre></div><h2 id=十六进制或其他非-utf8json-字符串转义的值不正确>十六进制或其他非 UTF8JSON 字符串转义的值不正确
+<a class=anchor href=#%e5%8d%81%e5%85%ad%e8%bf%9b%e5%88%b6%e6%88%96%e5%85%b6%e4%bb%96%e9%9d%9e-utf8json-%e5%ad%97%e7%ac%a6%e4%b8%b2%e8%bd%ac%e4%b9%89%e7%9a%84%e5%80%bc%e4%b8%8d%e6%ad%a3%e7%a1%ae>#</a></h2><ul><li>级别：中等</li></ul><p>Go 默认使用的字符串编码是 UTF8 编码的。这意味着你不能在 JSON 字符串中使用任意十六进制转义成的二进制数据（并且还必须转义反斜杠）。这确实是 Go 继承的 JSON 不足，但是在 Go 应用程序中经常发生，因此无论如何都要提一下。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (
+  <span style=color:#e6db74>&#34;fmt&#34;</span>
+  <span style=color:#e6db74>&#34;encoding/json&#34;</span>
+)
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>config</span> <span style=color:#66d9ef>struct</span> {
+  <span style=color:#a6e22e>Data</span> <span style=color:#66d9ef>string</span> <span style=color:#e6db74>`json:&#34;data&#34;`</span>
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+  <span style=color:#a6e22e>raw</span> <span style=color:#f92672>:=</span> []byte(<span style=color:#e6db74>`{&#34;data&#34;:&#34;\xc2&#34;}`</span>)
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>decoded</span> <span style=color:#a6e22e>config</span>
+
+  <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>Unmarshal</span>(<span style=color:#a6e22e>raw</span>, <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>decoded</span>); <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>err</span>)
+    <span style=color:#75715e>// 输出：字符串转义中的无效字符&#39;x&#39;
+</span><span style=color:#75715e></span>    }
+
+}
+</code></pre></div><p>如果 Go 尝试序列化一个十六进制字符串，则 <code>Unmarshal/Decode</code> 方法调用将失败。如果需要在字符串中使用十六进制字符，需要使用反斜杠转义，并确保使用另一个反斜杠转义反斜杠。如果要使用十六进制编码的二进制数据，可以转义反斜杠，然后使用 JSON 字符串中的解码的数据进行十六进制编码。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (
+  <span style=color:#e6db74>&#34;fmt&#34;</span>
+  <span style=color:#e6db74>&#34;encoding/json&#34;</span>
+)
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>config</span> <span style=color:#66d9ef>struct</span> {
+  <span style=color:#a6e22e>Data</span> <span style=color:#66d9ef>string</span> <span style=color:#e6db74>`json:&#34;data&#34;`</span>
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+  <span style=color:#a6e22e>raw</span> <span style=color:#f92672>:=</span> []byte(<span style=color:#e6db74>`{&#34;data&#34;:&#34;\\xc2&#34;}`</span>)
+
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>decoded</span> <span style=color:#a6e22e>config</span>
+
+  <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>Unmarshal</span>(<span style=color:#a6e22e>raw</span>, <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>decoded</span>)
+
+  <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;%#v&#34;</span>,<span style=color:#a6e22e>decoded</span>) <span style=color:#75715e>//prints: main.config{Data:&#34;\\xc2&#34;}
+</span><span style=color:#75715e></span>  <span style=color:#75715e>//todo: 对已解码的数据进行十六进制转义解码 
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>另一种方法是在 JSON 对象中使用字节数组 / 切片数据类型，但是二进制数据将必须使用 base64 编码。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (
+  <span style=color:#e6db74>&#34;fmt&#34;</span>
+  <span style=color:#e6db74>&#34;encoding/json&#34;</span>
+)
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>config</span> <span style=color:#66d9ef>struct</span> {
+  <span style=color:#a6e22e>Data</span> []<span style=color:#66d9ef>byte</span> <span style=color:#e6db74>`json:&#34;data&#34;`</span>
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+  <span style=color:#a6e22e>raw</span> <span style=color:#f92672>:=</span> []byte(<span style=color:#e6db74>`{&#34;data&#34;:&#34;wg==&#34;}`</span>)
+  <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>decoded</span> <span style=color:#a6e22e>config</span>
+
+  <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>Unmarshal</span>(<span style=color:#a6e22e>raw</span>, <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>decoded</span>); <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+          <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>err</span>)
+      }
+
+  <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;%#v&#34;</span>,<span style=color:#a6e22e>decoded</span>) <span style=color:#75715e>//prints: main.config{Data:[]uint8{0xc2}}
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>其他需要注意的是 Unicode 替换字符（U+FFFD）。 Go 将使用替换字符代替无效的 UTF8，因此 Unmarshal/Decode 调用不会失败，但是你获得的字符串可能不是你需要的结果。</p><h2 id=比较结构体--数组--切片--map>比较结构体 / 数组 / 切片 / Map
+<a class=anchor href=#%e6%af%94%e8%be%83%e7%bb%93%e6%9e%84%e4%bd%93--%e6%95%b0%e7%bb%84--%e5%88%87%e7%89%87--map>#</a></h2><ul><li>级别：中级</li></ul><p>如果结构体的每个字段都具有<strong>可比性</strong> , 那么则可以使用等号运算符 <code>==</code> 比较结构体变量。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>data</span> <span style=color:#66d9ef>struct</span> {  
+    <span style=color:#a6e22e>num</span> <span style=color:#66d9ef>int</span>
+    <span style=color:#a6e22e>fp</span> <span style=color:#66d9ef>float32</span>
+    <span style=color:#a6e22e>complex</span> <span style=color:#66d9ef>complex64</span>
+    <span style=color:#a6e22e>str</span> <span style=color:#66d9ef>string</span>
+    <span style=color:#a6e22e>char</span> <span style=color:#66d9ef>rune</span>
+    <span style=color:#a6e22e>yes</span> <span style=color:#66d9ef>bool</span>
+    <span style=color:#a6e22e>events</span> <span style=color:#f92672>&lt;-</span><span style=color:#66d9ef>chan</span> <span style=color:#66d9ef>string</span>
+    <span style=color:#a6e22e>handler</span> <span style=color:#66d9ef>interface</span>{}
+    <span style=color:#a6e22e>ref</span> <span style=color:#f92672>*</span><span style=color:#66d9ef>byte</span>
+    <span style=color:#a6e22e>raw</span> [<span style=color:#ae81ff>10</span>]<span style=color:#66d9ef>byte</span>
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>v1</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>data</span>{}
+    <span style=color:#a6e22e>v2</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>data</span>{}
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;v1 == v2:&#34;</span>,<span style=color:#a6e22e>v1</span> <span style=color:#f92672>==</span> <span style=color:#a6e22e>v2</span>) <span style=color:#75715e>//prints: v1 == v2: true
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>如果结构体的任意一个属性不具有可比性，那么使用等号运算符在编译时就会显示报错。注意，数组的数据类型具有可比性时，数组才能比较。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>data</span> <span style=color:#66d9ef>struct</span> {  
+    <span style=color:#a6e22e>num</span> <span style=color:#66d9ef>int</span>                <span style=color:#75715e>//ok
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>checks</span> [<span style=color:#ae81ff>10</span>]<span style=color:#66d9ef>func</span>() <span style=color:#66d9ef>bool</span> <span style=color:#75715e>//无法比较
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>doit</span> <span style=color:#66d9ef>func</span>() <span style=color:#66d9ef>bool</span>       <span style=color:#75715e>//无法比较
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>m</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>] <span style=color:#66d9ef>string</span>   <span style=color:#75715e>//无法比较
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>bytes</span> []<span style=color:#66d9ef>byte</span>           <span style=color:#75715e>//无法比较
+</span><span style=color:#75715e></span>}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>v1</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>data</span>{}
+    <span style=color:#a6e22e>v2</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>data</span>{}
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;v1 == v2:&#34;</span>,<span style=color:#a6e22e>v1</span> <span style=color:#f92672>==</span> <span style=color:#a6e22e>v2</span>)
+}
+</code></pre></div><p>GO 提供了一些辅助函数用来比较无法比较的变量。</p><p>最常见的方法就是使用反射库的 <code>DeepEqual()</code> 函数。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;reflect&#34;</span>
+)
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>data</span> <span style=color:#66d9ef>struct</span> {  
+    <span style=color:#a6e22e>num</span> <span style=color:#66d9ef>int</span>                <span style=color:#75715e>//ok
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>checks</span> [<span style=color:#ae81ff>10</span>]<span style=color:#66d9ef>func</span>() <span style=color:#66d9ef>bool</span> <span style=color:#75715e>//无法比较
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>doit</span> <span style=color:#66d9ef>func</span>() <span style=color:#66d9ef>bool</span>       <span style=color:#75715e>//无法比较
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>m</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>] <span style=color:#66d9ef>string</span>   <span style=color:#75715e>//无法比较
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>bytes</span> []<span style=color:#66d9ef>byte</span>           <span style=color:#75715e>//无法比较
+</span><span style=color:#75715e></span>}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>v1</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>data</span>{}
+    <span style=color:#a6e22e>v2</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>data</span>{}
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;v1 == v2:&#34;</span>,<span style=color:#a6e22e>reflect</span>.<span style=color:#a6e22e>DeepEqual</span>(<span style=color:#a6e22e>v1</span>,<span style=color:#a6e22e>v2</span>)) <span style=color:#75715e>//prints: v1 == v2: true
+</span><span style=color:#75715e></span>
+    <span style=color:#a6e22e>m1</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>string</span>{<span style=color:#e6db74>&#34;one&#34;</span>: <span style=color:#e6db74>&#34;a&#34;</span>,<span style=color:#e6db74>&#34;two&#34;</span>: <span style=color:#e6db74>&#34;b&#34;</span>}
+    <span style=color:#a6e22e>m2</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>string</span>{<span style=color:#e6db74>&#34;two&#34;</span>: <span style=color:#e6db74>&#34;b&#34;</span>, <span style=color:#e6db74>&#34;one&#34;</span>: <span style=color:#e6db74>&#34;a&#34;</span>}
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;m1 == m2:&#34;</span>,<span style=color:#a6e22e>reflect</span>.<span style=color:#a6e22e>DeepEqual</span>(<span style=color:#a6e22e>m1</span>, <span style=color:#a6e22e>m2</span>)) <span style=color:#75715e>//prints: m1 == m2: true
+</span><span style=color:#75715e></span>
+    <span style=color:#a6e22e>s1</span> <span style=color:#f92672>:=</span> []<span style=color:#66d9ef>int</span>{<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>}
+    <span style=color:#a6e22e>s2</span> <span style=color:#f92672>:=</span> []<span style=color:#66d9ef>int</span>{<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>}
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;s1 == s2:&#34;</span>,<span style=color:#a6e22e>reflect</span>.<span style=color:#a6e22e>DeepEqual</span>(<span style=color:#a6e22e>s1</span>, <span style=color:#a6e22e>s2</span>)) <span style=color:#75715e>//prints: s1 == s2: true
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>除了运行缓慢 （可能对你的应用程序造成破坏或可能不会破坏交易） 之外，<code>DeepEqual()</code> 也有自己的陷阱。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;reflect&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>b1</span> []<span style=color:#66d9ef>byte</span> = <span style=color:#66d9ef>nil</span>
+    <span style=color:#a6e22e>b2</span> <span style=color:#f92672>:=</span> []<span style=color:#66d9ef>byte</span>{}
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;b1 == b2:&#34;</span>,<span style=color:#a6e22e>reflect</span>.<span style=color:#a6e22e>DeepEqual</span>(<span style=color:#a6e22e>b1</span>, <span style=color:#a6e22e>b2</span>)) <span style=color:#75715e>//prints: b1 == b2: false
+</span><span style=color:#75715e></span>}
+</code></pre></div><p><code>DeepEqual()</code> 认为空切片不等于 “nil” 切片。此行为与你使用 <code>bytes.Equal()</code> 函数获得的行为不同。<code>bytes.Equal()</code> 认为 “nil” 和空片相等。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;bytes&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>b1</span> []<span style=color:#66d9ef>byte</span> = <span style=color:#66d9ef>nil</span>
+    <span style=color:#a6e22e>b2</span> <span style=color:#f92672>:=</span> []<span style=color:#66d9ef>byte</span>{}
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;b1 == b2:&#34;</span>,<span style=color:#a6e22e>bytes</span>.<span style=color:#a6e22e>Equal</span>(<span style=color:#a6e22e>b1</span>, <span style=color:#a6e22e>b2</span>)) <span style=color:#75715e>//prints: b1 == b2: true
+</span><span style=color:#75715e></span>}
+</code></pre></div><p><code>DeepEqual()</code> 比较切片并不总是完美的。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;reflect&#34;</span>
+    <span style=color:#e6db74>&#34;encoding/json&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>str</span> <span style=color:#66d9ef>string</span> = <span style=color:#e6db74>&#34;one&#34;</span>
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>in</span> <span style=color:#66d9ef>interface</span>{} = <span style=color:#e6db74>&#34;one&#34;</span>
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;str == in:&#34;</span>,<span style=color:#a6e22e>str</span> <span style=color:#f92672>==</span> <span style=color:#a6e22e>in</span>,<span style=color:#a6e22e>reflect</span>.<span style=color:#a6e22e>DeepEqual</span>(<span style=color:#a6e22e>str</span>, <span style=color:#a6e22e>in</span>)) 
+    <span style=color:#75715e>//prints: str == in: true true
+</span><span style=color:#75715e></span>
+    <span style=color:#a6e22e>v1</span> <span style=color:#f92672>:=</span> []<span style=color:#66d9ef>string</span>{<span style=color:#e6db74>&#34;one&#34;</span>,<span style=color:#e6db74>&#34;two&#34;</span>}
+    <span style=color:#a6e22e>v2</span> <span style=color:#f92672>:=</span> []<span style=color:#66d9ef>interface</span>{}{<span style=color:#e6db74>&#34;one&#34;</span>,<span style=color:#e6db74>&#34;two&#34;</span>}
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;v1 == v2:&#34;</span>,<span style=color:#a6e22e>reflect</span>.<span style=color:#a6e22e>DeepEqual</span>(<span style=color:#a6e22e>v1</span>, <span style=color:#a6e22e>v2</span>)) 
+    <span style=color:#75715e>//prints: v1 == v2: false (not ok)
+</span><span style=color:#75715e></span>
+    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>interface</span>{}{
+        <span style=color:#e6db74>&#34;code&#34;</span>: <span style=color:#ae81ff>200</span>,
+        <span style=color:#e6db74>&#34;value&#34;</span>: []<span style=color:#66d9ef>string</span>{<span style=color:#e6db74>&#34;one&#34;</span>,<span style=color:#e6db74>&#34;two&#34;</span>},
+    }
+    <span style=color:#a6e22e>encoded</span>, <span style=color:#a6e22e>_</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>Marshal</span>(<span style=color:#a6e22e>data</span>)
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>decoded</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>interface</span>{}
+    <span style=color:#a6e22e>json</span>.<span style=color:#a6e22e>Unmarshal</span>(<span style=color:#a6e22e>encoded</span>, <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>decoded</span>)
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;data == decoded:&#34;</span>,<span style=color:#a6e22e>reflect</span>.<span style=color:#a6e22e>DeepEqual</span>(<span style=color:#a6e22e>data</span>, <span style=color:#a6e22e>decoded</span>)) 
+    <span style=color:#75715e>//prints: data == decoded: false (not ok)
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>如果你的 <code>[]byte</code>（或字符串） 包含文本数据，当你需要使用不区分大小写比较值时，你可能倾向于使用使用 &ldquo;bytes&rdquo; 和 &ldquo;string&rdquo; 库的 <code>ToUpper()/ToLower()</code> 函数 （在使用 <code>==</code>,<code>bytes.Equal()</code> 或 <code>bytes.Compare()</code> 比较之前）。<br>这种方法适合英文，但是却不适合许多其他语言的文本。正确的方法应该使用 <code>strings.EqualFold()</code> 和 <code>bytes.EqualFold()</code> 方法进行比较。</p><p>如果你的 <code>[]byte</code> 中包含了验证用户信息的机密信息（例如，加密哈希，令牌等）, 请不要使用 <code>reflect.DeepEqual()</code> 或 <code>bytes.Equal()</code> 或 <code>bytes.Compare()</code> 函数。因为这些函数可能是你受到
+<a href=http://en.wikipedia.org/wiki/Timing_attack><strong>定时攻击</strong></a>，为了比较泄露时间信息，请使用 &lsquo;crypto/subtle&rsquo; 库 （例如：<code>subtle.ConstantTimeCompare()</code>）。</p><h2 id=从-panic-中恢复>从 Panic 中恢复
+<a class=anchor href=#%e4%bb%8e-panic-%e4%b8%ad%e6%81%a2%e5%a4%8d>#</a></h2><ul><li>级别：中等</li></ul><p><code>recover()</code> 函数可用于捕获 / 拦截 panic。 但是只有在 defer 函数中，调用 <code>recover()</code> 才能达到目的。</p><p>不正确：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    recover() <span style=color:#75715e>// 什么也没执行
+</span><span style=color:#75715e></span>    panic(<span style=color:#e6db74>&#34;not good&#34;</span>)
+    recover() <span style=color:#75715e>// 不会执行到 :)
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;ok&#34;</span>)
+}
+</code></pre></div><p>生效:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#66d9ef>defer</span> <span style=color:#66d9ef>func</span>() {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;recovered:&#34;</span>,recover())
+    }()
+
+    panic(<span style=color:#e6db74>&#34;not good&#34;</span>)
+}
+</code></pre></div><p>仅在你的 defer 函数中直接调用 <code>recover()</code> 时才有效。</p><p>失败:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>doRecover</span>() {  
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;recovered =&gt;&#34;</span>,recover()) <span style=color:#75715e>//prints: recovered =&gt; &lt;nil&gt;
+</span><span style=color:#75715e></span>}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#66d9ef>defer</span> <span style=color:#66d9ef>func</span>() {
+        <span style=color:#a6e22e>doRecover</span>() <span style=color:#75715e>//panic is not recovered
+</span><span style=color:#75715e></span>    }()
+
+    panic(<span style=color:#e6db74>&#34;not good&#34;</span>)
+}
+</code></pre></div><h2 id=使用或更新切片--数组--map-rnage-遍历的数据>使用或更新切片 / 数组 / Map Rnage 遍历的数据
+<a class=anchor href=#%e4%bd%bf%e7%94%a8%e6%88%96%e6%9b%b4%e6%96%b0%e5%88%87%e7%89%87--%e6%95%b0%e7%bb%84--map-rnage-%e9%81%8d%e5%8e%86%e7%9a%84%e6%95%b0%e6%8d%ae>#</a></h2><ul><li>级别：中等</li></ul><p>在 &ldquo;Range&rdquo; 范围的产生是数据是集合的元素副本，这些值不是原始数据的引用，这意味修改 Range 的值不会改变原始数据。这也意味获得的值地址也不会提供执行原始数据的指针。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> []<span style=color:#66d9ef>int</span>{<span style=color:#ae81ff>1</span>,<span style=color:#ae81ff>2</span>,<span style=color:#ae81ff>3</span>}
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>,<span style=color:#a6e22e>v</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>data</span> {
+        <span style=color:#a6e22e>v</span> <span style=color:#f92672>*=</span> <span style=color:#ae81ff>10</span> <span style=color:#75715e>//原始项目不变
+</span><span style=color:#75715e></span>    }
+
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;data:&#34;</span>,<span style=color:#a6e22e>data</span>) <span style=color:#75715e>//prints data: [1 2 3]
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>如果需要修改原始数据，需要使用索引访问数据。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> []<span style=color:#66d9ef>int</span>{<span style=color:#ae81ff>1</span>,<span style=color:#ae81ff>2</span>,<span style=color:#ae81ff>3</span>}
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span>,<span style=color:#a6e22e>_</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>data</span> {
+        <span style=color:#a6e22e>data</span>[<span style=color:#a6e22e>i</span>] <span style=color:#f92672>*=</span> <span style=color:#ae81ff>10</span>
+    }
+
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;data:&#34;</span>,<span style=color:#a6e22e>data</span>) <span style=color:#75715e>//prints data: [10 20 30]
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>如果你的集合包含指针类型，那么规则有些不同。如果希望原始数据指向另外一个值，则仍然需要使用索引操作，但是也可以使用 &ldquo;for range&rdquo; 语法中第二个值来更新存储在目标的数据。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> []<span style=color:#f92672>*</span><span style=color:#66d9ef>struct</span>{<span style=color:#a6e22e>num</span> <span style=color:#66d9ef>int</span>} {{<span style=color:#ae81ff>1</span>},{<span style=color:#ae81ff>2</span>},{<span style=color:#ae81ff>3</span>}}
+
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>,<span style=color:#a6e22e>v</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>data</span> {
+        <span style=color:#a6e22e>v</span>.<span style=color:#a6e22e>num</span> <span style=color:#f92672>*=</span> <span style=color:#ae81ff>10</span>
+    }
+
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>data</span>[<span style=color:#ae81ff>0</span>],<span style=color:#a6e22e>data</span>[<span style=color:#ae81ff>1</span>],<span style=color:#a6e22e>data</span>[<span style=color:#ae81ff>2</span>]) <span style=color:#75715e>//prints &amp;{10} &amp;{20} &amp;{30}
+</span><span style=color:#75715e></span>}
+</code></pre></div><h2 id=切片的隐藏数据>切片的隐藏数据
+<a class=anchor href=#%e5%88%87%e7%89%87%e7%9a%84%e9%9a%90%e8%97%8f%e6%95%b0%e6%8d%ae>#</a></h2><ul><li>级别：中级</li></ul><p>重新分割切片时，新切片将引用旧切片的底层数组。如果你忘记这个行为，并且分配相对较大切片，则从中创建了新建的切片引用了部分原始数据，则可能导致意外的底层数据使用。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>get</span>() []<span style=color:#66d9ef>byte</span> {  
+    <span style=color:#a6e22e>raw</span> <span style=color:#f92672>:=</span> make([]<span style=color:#66d9ef>byte</span>,<span style=color:#ae81ff>10000</span>)
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(len(<span style=color:#a6e22e>raw</span>),cap(<span style=color:#a6e22e>raw</span>),<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>raw</span>[<span style=color:#ae81ff>0</span>]) <span style=color:#75715e>//prints: 10000 10000 &lt;byte_addr_x&gt;
+</span><span style=color:#75715e></span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>raw</span>[:<span style=color:#ae81ff>3</span>]
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>get</span>()
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(len(<span style=color:#a6e22e>data</span>),cap(<span style=color:#a6e22e>data</span>),<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>data</span>[<span style=color:#ae81ff>0</span>]) <span style=color:#75715e>//prints: 3 10000 &lt;byte_addr_x&gt;
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>为避免此陷阱，请确保从临时切片中复制所需的数据（而不是切割切片）。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>get</span>() []<span style=color:#66d9ef>byte</span> {  
+    <span style=color:#a6e22e>raw</span> <span style=color:#f92672>:=</span> make([]<span style=color:#66d9ef>byte</span>,<span style=color:#ae81ff>10000</span>)
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(len(<span style=color:#a6e22e>raw</span>),cap(<span style=color:#a6e22e>raw</span>),<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>raw</span>[<span style=color:#ae81ff>0</span>]) <span style=color:#75715e>//prints: 10000 10000 &lt;byte_addr_x&gt;
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>res</span> <span style=color:#f92672>:=</span> make([]<span style=color:#66d9ef>byte</span>,<span style=color:#ae81ff>3</span>)
+    copy(<span style=color:#a6e22e>res</span>,<span style=color:#a6e22e>raw</span>[:<span style=color:#ae81ff>3</span>])
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>res</span>
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>get</span>()
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(len(<span style=color:#a6e22e>data</span>),cap(<span style=color:#a6e22e>data</span>),<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>data</span>[<span style=color:#ae81ff>0</span>]) <span style=color:#75715e>//prints: 3 3 &lt;byte_addr_y&gt;
+</span><span style=color:#75715e></span>}
+</code></pre></div><h2 id=切片数据污染>切片数据污染
+<a class=anchor href=#%e5%88%87%e7%89%87%e6%95%b0%e6%8d%ae%e6%b1%a1%e6%9f%93>#</a></h2><ul><li>等级：中级</li></ul><p>假如需要修改路径 （存储在切片中）。你可以重新设置路径用来引用每个目录，从而修改第一个目录的名称，然后将这些名称合并创建新路径。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;bytes&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>path</span> <span style=color:#f92672>:=</span> []byte(<span style=color:#e6db74>&#34;AAAA/BBBBBBBBB&#34;</span>)
+    <span style=color:#a6e22e>sepIndex</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>bytes</span>.<span style=color:#a6e22e>IndexByte</span>(<span style=color:#a6e22e>path</span>,<span style=color:#e6db74>&#39;/&#39;</span>)
+    <span style=color:#a6e22e>dir1</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>path</span>[:<span style=color:#a6e22e>sepIndex</span>]
+    <span style=color:#a6e22e>dir2</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>path</span>[<span style=color:#a6e22e>sepIndex</span><span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>:]
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;dir1 =&gt;&#34;</span>,string(<span style=color:#a6e22e>dir1</span>)) <span style=color:#75715e>//prints: dir1 =&gt; AAAA
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;dir2 =&gt;&#34;</span>,string(<span style=color:#a6e22e>dir2</span>)) <span style=color:#75715e>//prints: dir2 =&gt; BBBBBBBBB
+</span><span style=color:#75715e></span>
+    <span style=color:#a6e22e>dir1</span> = append(<span style=color:#a6e22e>dir1</span>,<span style=color:#e6db74>&#34;suffix&#34;</span><span style=color:#f92672>...</span>)
+    <span style=color:#a6e22e>path</span> = <span style=color:#a6e22e>bytes</span>.<span style=color:#a6e22e>Join</span>([][]<span style=color:#66d9ef>byte</span>{<span style=color:#a6e22e>dir1</span>,<span style=color:#a6e22e>dir2</span>},[]<span style=color:#66d9ef>byte</span>{<span style=color:#e6db74>&#39;/&#39;</span>})
+
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;dir1 =&gt;&#34;</span>,string(<span style=color:#a6e22e>dir1</span>)) <span style=color:#75715e>//prints: dir1 =&gt; AAAAsuffix
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;dir2 =&gt;&#34;</span>,string(<span style=color:#a6e22e>dir2</span>)) <span style=color:#75715e>//prints: dir2 =&gt; uffixBBBB (not ok)
+</span><span style=color:#75715e></span>
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;new path =&gt;&#34;</span>,string(<span style=color:#a6e22e>path</span>))
+}
+</code></pre></div><p>结果并不是预料的 &ldquo;AAAAsuffix/BBBBBBBBB&rdquo; 这样，而是 &ldquo;AAAAsuffix/uffixBBBB&rdquo;。发送这种请求是因为两个路径切片的引用了相同的原始底层数据。这意味修改原始路径也会被修改。根据你的程序情况，这也可能会是一个问题。</p><p>可以通过分配新的切片并复制数据来解决此问题。 另一种选择是使用完整切片表达式。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;bytes&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>path</span> <span style=color:#f92672>:=</span> []byte(<span style=color:#e6db74>&#34;AAAA/BBBBBBBBB&#34;</span>)
+    <span style=color:#a6e22e>sepIndex</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>bytes</span>.<span style=color:#a6e22e>IndexByte</span>(<span style=color:#a6e22e>path</span>,<span style=color:#e6db74>&#39;/&#39;</span>)
+    <span style=color:#a6e22e>dir1</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>path</span>[:<span style=color:#a6e22e>sepIndex</span>:<span style=color:#a6e22e>sepIndex</span>] <span style=color:#75715e>//完整切片表达式
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>dir2</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>path</span>[<span style=color:#a6e22e>sepIndex</span><span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>:]
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;dir1 =&gt;&#34;</span>,string(<span style=color:#a6e22e>dir1</span>)) <span style=color:#75715e>//prints: dir1 =&gt; AAAA
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;dir2 =&gt;&#34;</span>,string(<span style=color:#a6e22e>dir2</span>)) <span style=color:#75715e>//prints: dir2 =&gt; BBBBBBBBB
+</span><span style=color:#75715e></span>
+    <span style=color:#a6e22e>dir1</span> = append(<span style=color:#a6e22e>dir1</span>,<span style=color:#e6db74>&#34;suffix&#34;</span><span style=color:#f92672>...</span>)
+    <span style=color:#a6e22e>path</span> = <span style=color:#a6e22e>bytes</span>.<span style=color:#a6e22e>Join</span>([][]<span style=color:#66d9ef>byte</span>{<span style=color:#a6e22e>dir1</span>,<span style=color:#a6e22e>dir2</span>},[]<span style=color:#66d9ef>byte</span>{<span style=color:#e6db74>&#39;/&#39;</span>})
+
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;dir1 =&gt;&#34;</span>,string(<span style=color:#a6e22e>dir1</span>)) <span style=color:#75715e>//prints: dir1 =&gt; AAAAsuffix
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;dir2 =&gt;&#34;</span>,string(<span style=color:#a6e22e>dir2</span>)) <span style=color:#75715e>//prints: dir2 =&gt; BBBBBBBBB (ok now)
+</span><span style=color:#75715e></span>
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;new path =&gt;&#34;</span>,string(<span style=color:#a6e22e>path</span>))
+}
+</code></pre></div><p>完整切片表达式中的额外参数控制新切片的容量。 现在追加到该切片的数据将触发切片扩容，而不是覆盖第二个片中的数据。</p><h2 id=旧的切片>旧的切片
+<a class=anchor href=#%e6%97%a7%e7%9a%84%e5%88%87%e7%89%87>#</a></h2><ul><li>级别：中等</li></ul><p>多个切片可以引用相同的数据。 例如当你使用现有切片创建新切片时，可能会发生这种情况。 如果程序依靠此行为来正常运行，那么将需要担心的旧的切片。</p><p>在某些时候，当原始数组无法容纳更多新数据时，将数据添加到切片将导致新的数组扩容。现在其他切片将指向旧数组（包含旧数据）。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>s1</span> <span style=color:#f92672>:=</span> []<span style=color:#66d9ef>int</span>{<span style=color:#ae81ff>1</span>,<span style=color:#ae81ff>2</span>,<span style=color:#ae81ff>3</span>}
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(len(<span style=color:#a6e22e>s1</span>),cap(<span style=color:#a6e22e>s1</span>),<span style=color:#a6e22e>s1</span>) <span style=color:#75715e>//prints 3 3 [1 2 3]
+</span><span style=color:#75715e></span>
+    <span style=color:#a6e22e>s2</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>s1</span>[<span style=color:#ae81ff>1</span>:]
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(len(<span style=color:#a6e22e>s2</span>),cap(<span style=color:#a6e22e>s2</span>),<span style=color:#a6e22e>s2</span>) <span style=color:#75715e>//prints 2 2 [2 3]
+</span><span style=color:#75715e></span>
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>s2</span> { <span style=color:#a6e22e>s2</span>[<span style=color:#a6e22e>i</span>] <span style=color:#f92672>+=</span> <span style=color:#ae81ff>20</span> }
+
+    <span style=color:#75715e>//仍然引用相同的数组
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>s1</span>) <span style=color:#75715e>//prints [1 22 23]
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>s2</span>) <span style=color:#75715e>//prints [22 23]
+</span><span style=color:#75715e></span>
+    <span style=color:#a6e22e>s2</span> = append(<span style=color:#a6e22e>s2</span>,<span style=color:#ae81ff>4</span>)
+
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>s2</span> { <span style=color:#a6e22e>s2</span>[<span style=color:#a6e22e>i</span>] <span style=color:#f92672>+=</span> <span style=color:#ae81ff>10</span> }
+
+    <span style=color:#75715e>//s1 is now &#34;stale&#34;
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>s1</span>) <span style=color:#75715e>//prints [1 22 23]
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>s2</span>) <span style=color:#75715e>//prints [32 33 14]
+</span><span style=color:#75715e></span>}
+</code></pre></div><h2 id=类型声明和方法>类型声明和方法
+<a class=anchor href=#%e7%b1%bb%e5%9e%8b%e5%a3%b0%e6%98%8e%e5%92%8c%e6%96%b9%e6%b3%95>#</a></h2><ul><li>级别：中级</li></ul><p>通过从现有 （非接口） 类型定义新类型来创建类型声明时，你不会继承为该现有类型定义的方法。</p><p>失败：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;sync&#34;</span>
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>myMutex</span> <span style=color:#a6e22e>sync</span>.<span style=color:#a6e22e>Mutex</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>mtx</span> <span style=color:#a6e22e>myMutex</span>
+    <span style=color:#a6e22e>mtx</span>.<span style=color:#a6e22e>Lock</span>() <span style=color:#75715e>//error
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>mtx</span>.<span style=color:#a6e22e>Unlock</span>() <span style=color:#75715e>//error  
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>编译错误：</p><blockquote><p>/tmp/sandbox106401185/main.go:9: mtx.Lock undefined （type myMutex has no field or method Lock） /tmp/sandbox106401185/main.go:10: mtx.Unlock undefined （type myMutex has no field or method Unlock）</p></blockquote><p>如果确实需要原始类型的方法，则可以定义一个将原始类型嵌入为匿名字段的新结构类型。</p><p>作品：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;sync&#34;</span>
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>myLocker</span> <span style=color:#66d9ef>struct</span> {  
+    <span style=color:#a6e22e>sync</span>.<span style=color:#a6e22e>Mutex</span>
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>lock</span> <span style=color:#a6e22e>myLocker</span>
+    <span style=color:#a6e22e>lock</span>.<span style=color:#a6e22e>Lock</span>() <span style=color:#75715e>//ok
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>lock</span>.<span style=color:#a6e22e>Unlock</span>() <span style=color:#75715e>//ok
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>接口类型声明也保留其方法集。</p><p>作品：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;sync&#34;</span>
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>myLocker</span> <span style=color:#a6e22e>sync</span>.<span style=color:#a6e22e>Locker</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>lock</span> <span style=color:#a6e22e>myLocker</span> = new(<span style=color:#a6e22e>sync</span>.<span style=color:#a6e22e>Mutex</span>)
+    <span style=color:#a6e22e>lock</span>.<span style=color:#a6e22e>Lock</span>() <span style=color:#75715e>//ok
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>lock</span>.<span style=color:#a6e22e>Unlock</span>() <span style=color:#75715e>//ok
+</span><span style=color:#75715e></span>}
+</code></pre></div><h2 id=突破-for-switch-和--for-select-代码块>突破 “for switch” 和 “ for select” 代码块
+<a class=anchor href=#%e7%aa%81%e7%a0%b4-for-switch-%e5%92%8c--for-select-%e4%bb%a3%e7%a0%81%e5%9d%97>#</a></h2><ul><li>级别：中级</li></ul><p>没有标签的 “break” 语句只会使你脱离内部 switch /select 块。如果不能使用 “ return” 语句，则为外循环定义标签是第二件事。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>loop</span>:
+        <span style=color:#66d9ef>for</span> {
+            <span style=color:#66d9ef>switch</span> {
+            <span style=color:#66d9ef>case</span> <span style=color:#66d9ef>true</span>:
+                <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;breaking out...&#34;</span>)
+                <span style=color:#66d9ef>break</span> <span style=color:#a6e22e>loop</span>
+            }
+        }
+
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;out!&#34;</span>)
+}
+</code></pre></div><p>“goto” 语句也可以解决问题。</p><h2 id=句中的迭代变量和闭包>句中的迭代变量和闭包
+<a class=anchor href=#%e5%8f%a5%e4%b8%ad%e7%9a%84%e8%bf%ad%e4%bb%a3%e5%8f%98%e9%87%8f%e5%92%8c%e9%97%ad%e5%8c%85>#</a></h2><ul><li>级别：中级</li></ul><p>这是 Go 中最常见的陷阱。<code>for</code> 语句中的迭代变量在每次迭代中都会重复使用。这意味着在 <code>for</code> 循环中创建的每个闭包 （aka 函数文字） 都将引用相同的变量 （它们将在这些 goroutine 开始执行时获得该变量的值）。</p><p>不正确：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;time&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> []<span style=color:#66d9ef>string</span>{<span style=color:#e6db74>&#34;one&#34;</span>,<span style=color:#e6db74>&#34;two&#34;</span>,<span style=color:#e6db74>&#34;three&#34;</span>}
+
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>,<span style=color:#a6e22e>v</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>data</span> {
+        <span style=color:#66d9ef>go</span> <span style=color:#66d9ef>func</span>() {
+            <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>v</span>)
+        }()
+    }
+
+    <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Sleep</span>(<span style=color:#ae81ff>3</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
+    <span style=color:#75715e>//goroutines print: three, three, three
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>最简单的解决方案 （不需要对 goroutine 进行任何更改） 是将当前迭代变量值保存在 <code>for</code> 循环块内的局部变量中。</p><p>作品：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;time&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> []<span style=color:#66d9ef>string</span>{<span style=color:#e6db74>&#34;one&#34;</span>,<span style=color:#e6db74>&#34;two&#34;</span>,<span style=color:#e6db74>&#34;three&#34;</span>}
+
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>,<span style=color:#a6e22e>v</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>data</span> {
+        <span style=color:#a6e22e>vcopy</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>v</span> <span style=color:#75715e>//
+</span><span style=color:#75715e></span>        <span style=color:#66d9ef>go</span> <span style=color:#66d9ef>func</span>() {
+            <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>vcopy</span>)
+        }()
+    }
+
+    <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Sleep</span>(<span style=color:#ae81ff>3</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
+    <span style=color:#75715e>//goroutines print: one, two, three
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>另一种解决方案是将当前迭代变量作为参数传递给匿名 goroutine。</p><p>作品：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;time&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> []<span style=color:#66d9ef>string</span>{<span style=color:#e6db74>&#34;one&#34;</span>,<span style=color:#e6db74>&#34;two&#34;</span>,<span style=color:#e6db74>&#34;three&#34;</span>}
+
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>,<span style=color:#a6e22e>v</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>data</span> {
+        <span style=color:#66d9ef>go</span> <span style=color:#66d9ef>func</span>(<span style=color:#a6e22e>in</span> <span style=color:#66d9ef>string</span>) {
+            <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>in</span>)
+        }(<span style=color:#a6e22e>v</span>)
+    }
+
+    <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Sleep</span>(<span style=color:#ae81ff>3</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
+    <span style=color:#75715e>//goroutines print: one, two, three
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>这是陷阱的稍微复杂一点的版本。</p><p>不正确：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;time&#34;</span>
+)
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>field</span> <span style=color:#66d9ef>struct</span> {  
+    <span style=color:#a6e22e>name</span> <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>p</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>field</span>) print() {  
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>p</span>.<span style=color:#a6e22e>name</span>)
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> []<span style=color:#a6e22e>field</span>{{<span style=color:#e6db74>&#34;one&#34;</span>},{<span style=color:#e6db74>&#34;two&#34;</span>},{<span style=color:#e6db74>&#34;three&#34;</span>}}
+
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>,<span style=color:#a6e22e>v</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>data</span> {
+        <span style=color:#66d9ef>go</span> <span style=color:#a6e22e>v</span>.print()
+    }
+
+    <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Sleep</span>(<span style=color:#ae81ff>3</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
+    <span style=color:#75715e>//goroutines print: three, three, three
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>作品：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;time&#34;</span>
+)
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>field</span> <span style=color:#66d9ef>struct</span> {  
+    <span style=color:#a6e22e>name</span> <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>p</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>field</span>) print() {  
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>p</span>.<span style=color:#a6e22e>name</span>)
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> []<span style=color:#a6e22e>field</span>{{<span style=color:#e6db74>&#34;one&#34;</span>},{<span style=color:#e6db74>&#34;two&#34;</span>},{<span style=color:#e6db74>&#34;three&#34;</span>}}
+
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>,<span style=color:#a6e22e>v</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>data</span> {
+        <span style=color:#a6e22e>v</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>v</span>
+        <span style=color:#66d9ef>go</span> <span style=color:#a6e22e>v</span>.print()
+    }
+
+    <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Sleep</span>(<span style=color:#ae81ff>3</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
+    <span style=color:#75715e>//goroutines print: one, two, three
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>你认为运行此代码时会看到什么 （为什么）？</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;time&#34;</span>
+)
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>field</span> <span style=color:#66d9ef>struct</span> {  
+    <span style=color:#a6e22e>name</span> <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>p</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>field</span>) print() {  
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>p</span>.<span style=color:#a6e22e>name</span>)
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> []<span style=color:#f92672>*</span><span style=color:#a6e22e>field</span>{{<span style=color:#e6db74>&#34;one&#34;</span>},{<span style=color:#e6db74>&#34;two&#34;</span>},{<span style=color:#e6db74>&#34;three&#34;</span>}}
+
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>,<span style=color:#a6e22e>v</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>data</span> {
+        <span style=color:#66d9ef>go</span> <span style=color:#a6e22e>v</span>.print()
+    }
+
+    <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Sleep</span>(<span style=color:#ae81ff>3</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
+}
+</code></pre></div><h2 id=延迟函数调用参数评估>延迟函数调用参数评估
+<a class=anchor href=#%e5%bb%b6%e8%bf%9f%e5%87%bd%e6%95%b0%e8%b0%83%e7%94%a8%e5%8f%82%e6%95%b0%e8%af%84%e4%bc%b0>#</a></h2><ul><li>级别：中级</li></ul><p>在评估 <code>defer</code> 语句时 （而不是在函数实际执行时），评估延迟函数调用的参数。延迟方法调用时，将应用相同的规则。结构值也与显式方法参数和封闭变量一起保存。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>i</span> <span style=color:#66d9ef>int</span> = <span style=color:#ae81ff>1</span>
+
+    <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;result =&gt;&#34;</span>,<span style=color:#66d9ef>func</span>() <span style=color:#66d9ef>int</span> { <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>*</span> <span style=color:#ae81ff>2</span> }())
+    <span style=color:#a6e22e>i</span><span style=color:#f92672>++</span>
+    <span style=color:#75715e>//prints: result =&gt; 2 (not ok if you expected 4)
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>如果具有指针参数，则可以更改它们指向的值，因为在评估 <code>defer</code> 语句时仅保存指针。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (
+  <span style=color:#e6db74>&#34;fmt&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+  <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>1</span>
+  <span style=color:#66d9ef>defer</span> <span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>in</span> <span style=color:#f92672>*</span><span style=color:#66d9ef>int</span>) { <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;result =&gt;&#34;</span>, <span style=color:#f92672>*</span><span style=color:#a6e22e>in</span>) }(<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>i</span>)
+
+  <span style=color:#a6e22e>i</span> = <span style=color:#ae81ff>2</span>
+  <span style=color:#75715e>//prints: result =&gt; 2
+</span><span style=color:#75715e></span>}
+</code></pre></div><h2 id=延迟函数调用执行>延迟函数调用执行
+<a class=anchor href=#%e5%bb%b6%e8%bf%9f%e5%87%bd%e6%95%b0%e8%b0%83%e7%94%a8%e6%89%a7%e8%a1%8c>#</a></h2><ul><li>级别：中级</li></ul><p>延迟的调用在包含函数的末尾 （以相反的顺序） 而不是在包含代码块的末尾执行。对于新的 Go 开发人员来说，这是一个容易犯的错误，将延迟的代码执行规则与变量作用域规则混为一谈。如果你具有一个长期运行的函数，且该函数具有 <code>for</code> 循环，该循环试图在每次迭代中延迟 <code>defer</code> 资源清理调用，则可能会成为问题。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;os&#34;</span>
+    <span style=color:#e6db74>&#34;path/filepath&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Args</span>) <span style=color:#f92672>!=</span> <span style=color:#ae81ff>2</span> {
+        <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Exit</span>(<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>)
+    }
+
+    <span style=color:#a6e22e>start</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Stat</span>(<span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Args</span>[<span style=color:#ae81ff>1</span>])
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> <span style=color:#f92672>||</span> !<span style=color:#a6e22e>start</span>.<span style=color:#a6e22e>IsDir</span>(){
+        <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Exit</span>(<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>)
+    }
+
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>targets</span> []<span style=color:#66d9ef>string</span>
+    <span style=color:#a6e22e>filepath</span>.<span style=color:#a6e22e>Walk</span>(<span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Args</span>[<span style=color:#ae81ff>1</span>], <span style=color:#66d9ef>func</span>(<span style=color:#a6e22e>fpath</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>fi</span> <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>FileInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>) <span style=color:#66d9ef>error</span> {
+        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>err</span>
+        }
+
+        <span style=color:#66d9ef>if</span> !<span style=color:#a6e22e>fi</span>.<span style=color:#a6e22e>Mode</span>().<span style=color:#a6e22e>IsRegular</span>() {
+            <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+        }
+
+        <span style=color:#a6e22e>targets</span> = append(<span style=color:#a6e22e>targets</span>,<span style=color:#a6e22e>fpath</span>)
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+    })
+
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>,<span style=color:#a6e22e>target</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>targets</span> {
+        <span style=color:#a6e22e>f</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Open</span>(<span style=color:#a6e22e>target</span>)
+        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+            <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;bad target:&#34;</span>,<span style=color:#a6e22e>target</span>,<span style=color:#e6db74>&#34;error:&#34;</span>,<span style=color:#a6e22e>err</span>) <span style=color:#75715e>//prints error: too many open files
+</span><span style=color:#75715e></span>            <span style=color:#66d9ef>break</span>
+        }
+        <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>f</span>.<span style=color:#a6e22e>Close</span>() <span style=color:#75715e>//will not be closed at the end of this code block
+</span><span style=color:#75715e></span>        <span style=color:#75715e>//do something with the file...
+</span><span style=color:#75715e></span>    }
+}
+</code></pre></div><p>解决该问题的一种方法是将代码块包装在一个函数中。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;os&#34;</span>
+    <span style=color:#e6db74>&#34;path/filepath&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Args</span>) <span style=color:#f92672>!=</span> <span style=color:#ae81ff>2</span> {
+        <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Exit</span>(<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>)
+    }
+
+    <span style=color:#a6e22e>start</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Stat</span>(<span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Args</span>[<span style=color:#ae81ff>1</span>])
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> <span style=color:#f92672>||</span> !<span style=color:#a6e22e>start</span>.<span style=color:#a6e22e>IsDir</span>(){
+        <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Exit</span>(<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>)
+    }
+
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>targets</span> []<span style=color:#66d9ef>string</span>
+    <span style=color:#a6e22e>filepath</span>.<span style=color:#a6e22e>Walk</span>(<span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Args</span>[<span style=color:#ae81ff>1</span>], <span style=color:#66d9ef>func</span>(<span style=color:#a6e22e>fpath</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>fi</span> <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>FileInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>) <span style=color:#66d9ef>error</span> {
+        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>err</span>
+        }
+
+        <span style=color:#66d9ef>if</span> !<span style=color:#a6e22e>fi</span>.<span style=color:#a6e22e>Mode</span>().<span style=color:#a6e22e>IsRegular</span>() {
+            <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+        }
+
+        <span style=color:#a6e22e>targets</span> = append(<span style=color:#a6e22e>targets</span>,<span style=color:#a6e22e>fpath</span>)
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+    })
+
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>,<span style=color:#a6e22e>target</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>targets</span> {
+        <span style=color:#66d9ef>func</span>() {
+            <span style=color:#a6e22e>f</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Open</span>(<span style=color:#a6e22e>target</span>)
+            <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+                <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;bad target:&#34;</span>,<span style=color:#a6e22e>target</span>,<span style=color:#e6db74>&#34;error:&#34;</span>,<span style=color:#a6e22e>err</span>)
+                <span style=color:#66d9ef>return</span>
+            }
+            <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>f</span>.<span style=color:#a6e22e>Close</span>() <span style=color:#75715e>//ok
+</span><span style=color:#75715e></span>            <span style=color:#75715e>//do something with the file...
+</span><span style=color:#75715e></span>        }()
+    }
+}
+</code></pre></div><p>另一种方法是删除 <code>defer</code> 语句</p><h2 id=失败类型断言>失败类型断言
+<a class=anchor href=#%e5%a4%b1%e8%b4%a5%e7%b1%bb%e5%9e%8b%e6%96%ad%e8%a8%80>#</a></h2><ul><li>级别：中级</li></ul><p>失败的类型断言将为断言语句中使用的目标类型返回「零值」。当它与影子变量混合在一起时，可能导致意外行为。</p><p>错误的范例:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>data</span> <span style=color:#66d9ef>interface</span>{} = <span style=color:#e6db74>&#34;great&#34;</span>
+
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>data</span>, <span style=color:#a6e22e>ok</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>data</span>.(<span style=color:#66d9ef>int</span>); <span style=color:#a6e22e>ok</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;[is an int] value =&gt;&#34;</span>,<span style=color:#a6e22e>data</span>)
+    } <span style=color:#66d9ef>else</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;[not an int] value =&gt;&#34;</span>,<span style=color:#a6e22e>data</span>) 
+        <span style=color:#75715e>//prints: [not an int] value =&gt; 0 (not &#34;great&#34;)
+</span><span style=color:#75715e></span>    }
+}
+</code></pre></div><p>正确的范例:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>data</span> <span style=color:#66d9ef>interface</span>{} = <span style=color:#e6db74>&#34;great&#34;</span>
+
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>res</span>, <span style=color:#a6e22e>ok</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>data</span>.(<span style=color:#66d9ef>int</span>); <span style=color:#a6e22e>ok</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;[is an int] value =&gt;&#34;</span>,<span style=color:#a6e22e>res</span>)
+    } <span style=color:#66d9ef>else</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;[not an int] value =&gt;&#34;</span>,<span style=color:#a6e22e>data</span>) 
+        <span style=color:#75715e>//prints: [not an int] value =&gt; great (as expected)
+</span><span style=color:#75715e></span>    }
+}
+</code></pre></div><h2 id=阻塞的-goroutines-和资源泄漏>阻塞的 Goroutines 和资源泄漏
+<a class=anchor href=#%e9%98%bb%e5%a1%9e%e7%9a%84-goroutines-%e5%92%8c%e8%b5%84%e6%ba%90%e6%b3%84%e6%bc%8f>#</a></h2><ul><li>级别：中级</li></ul><p>Rob Pike 在 Google I/O 大会上的演讲
+<a href=https://talks.golang.org/2012/concurrency.slide#1>「Go Concurrency Patterns」</a> 谈到了许多基本的并发模式。从多个目标中获取第一个结果就是其中之一。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>First</span>(<span style=color:#a6e22e>query</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>replicas</span> <span style=color:#f92672>...</span><span style=color:#a6e22e>Search</span>) <span style=color:#a6e22e>Result</span> {  
+    <span style=color:#a6e22e>c</span> <span style=color:#f92672>:=</span> make(<span style=color:#66d9ef>chan</span> <span style=color:#a6e22e>Result</span>)
+    <span style=color:#a6e22e>searchReplica</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>func</span>(<span style=color:#a6e22e>i</span> <span style=color:#66d9ef>int</span>) { <span style=color:#a6e22e>c</span> <span style=color:#f92672>&lt;-</span> <span style=color:#a6e22e>replicas</span>[<span style=color:#a6e22e>i</span>](<span style=color:#a6e22e>query</span>) }
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>replicas</span> {
+        <span style=color:#66d9ef>go</span> <span style=color:#a6e22e>searchReplica</span>(<span style=color:#a6e22e>i</span>)
+    }
+    <span style=color:#66d9ef>return</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>c</span>
+}
+</code></pre></div><p>该函数为每个搜索副本启动 goroutines。每个 goroutine 将其搜索结果发送到结果通道。返回结果通道的第一个值。</p><p>其他 goroutines 的结果如何？那 goroutines 本身呢？</p><p><code>First()</code> 函数中的结果通道未缓冲。这意味着仅第一个 goroutine 返回。所有其他 goroutine 都被困在尝试发送结果。这意味着，如果你有多个副本，则每个调用都会泄漏资源。</p><p>为了避免泄漏，你需要确保所有 goroutine 都退出。一种潜在的解决方案是使用足够大的缓冲结果通道来保存所有结果。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>First</span>(<span style=color:#a6e22e>query</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>replicas</span> <span style=color:#f92672>...</span><span style=color:#a6e22e>Search</span>) <span style=color:#a6e22e>Result</span> {  
+    <span style=color:#a6e22e>c</span> <span style=color:#f92672>:=</span> make(<span style=color:#66d9ef>chan</span> <span style=color:#a6e22e>Result</span>,len(<span style=color:#a6e22e>replicas</span>))
+    <span style=color:#a6e22e>searchReplica</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>func</span>(<span style=color:#a6e22e>i</span> <span style=color:#66d9ef>int</span>) { <span style=color:#a6e22e>c</span> <span style=color:#f92672>&lt;-</span> <span style=color:#a6e22e>replicas</span>[<span style=color:#a6e22e>i</span>](<span style=color:#a6e22e>query</span>) }
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>replicas</span> {
+        <span style=color:#66d9ef>go</span> <span style=color:#a6e22e>searchReplica</span>(<span style=color:#a6e22e>i</span>)
+    }
+    <span style=color:#66d9ef>return</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>c</span>
+}
+</code></pre></div><p>另一种可能的解决方案是使用 <code>select</code> 语句和 <code>default</code> 大小写以及可保存一个值的缓冲结果通道。<code>default</code> 情况确保即使结果通道无法接收消息，goroutine 也不会卡住。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>First</span>(<span style=color:#a6e22e>query</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>replicas</span> <span style=color:#f92672>...</span><span style=color:#a6e22e>Search</span>) <span style=color:#a6e22e>Result</span> {  
+    <span style=color:#a6e22e>c</span> <span style=color:#f92672>:=</span> make(<span style=color:#66d9ef>chan</span> <span style=color:#a6e22e>Result</span>,<span style=color:#ae81ff>1</span>)
+    <span style=color:#a6e22e>searchReplica</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>func</span>(<span style=color:#a6e22e>i</span> <span style=color:#66d9ef>int</span>) { 
+        <span style=color:#66d9ef>select</span> {
+        <span style=color:#66d9ef>case</span> <span style=color:#a6e22e>c</span> <span style=color:#f92672>&lt;-</span> <span style=color:#a6e22e>replicas</span>[<span style=color:#a6e22e>i</span>](<span style=color:#a6e22e>query</span>):
+        <span style=color:#66d9ef>default</span>:
+        }
+    }
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>replicas</span> {
+        <span style=color:#66d9ef>go</span> <span style=color:#a6e22e>searchReplica</span>(<span style=color:#a6e22e>i</span>)
+    }
+    <span style=color:#66d9ef>return</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>c</span>
+}
+</code></pre></div><p>你还可以使用特殊的取消通道来中断工作。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>First</span>(<span style=color:#a6e22e>query</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>replicas</span> <span style=color:#f92672>...</span><span style=color:#a6e22e>Search</span>) <span style=color:#a6e22e>Result</span> {  
+    <span style=color:#a6e22e>c</span> <span style=color:#f92672>:=</span> make(<span style=color:#66d9ef>chan</span> <span style=color:#a6e22e>Result</span>)
+    <span style=color:#a6e22e>done</span> <span style=color:#f92672>:=</span> make(<span style=color:#66d9ef>chan</span> <span style=color:#66d9ef>struct</span>{})
+    <span style=color:#66d9ef>defer</span> close(<span style=color:#a6e22e>done</span>)
+    <span style=color:#a6e22e>searchReplica</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>func</span>(<span style=color:#a6e22e>i</span> <span style=color:#66d9ef>int</span>) { 
+        <span style=color:#66d9ef>select</span> {
+        <span style=color:#66d9ef>case</span> <span style=color:#a6e22e>c</span> <span style=color:#f92672>&lt;-</span> <span style=color:#a6e22e>replicas</span>[<span style=color:#a6e22e>i</span>](<span style=color:#a6e22e>query</span>):
+        <span style=color:#66d9ef>case</span> <span style=color:#f92672>&lt;-</span> <span style=color:#a6e22e>done</span>:
+        }
+    }
+    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>replicas</span> {
+        <span style=color:#66d9ef>go</span> <span style=color:#a6e22e>searchReplica</span>(<span style=color:#a6e22e>i</span>)
+    }
+
+    <span style=color:#66d9ef>return</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>c</span>
+}
+</code></pre></div><p>为什么演示文稿中包含这些错误？ Rob Pike 只是不想使幻灯片复杂化。这是有道理的，但是对于新的 Go 开发人员来说可能是个问题，他们会按原样使用该代码，而不认为它可能会出现问题。</p><h2 id=相同地址的不同零大小变量>相同地址的不同零大小变量
+<a class=anchor href=#%e7%9b%b8%e5%90%8c%e5%9c%b0%e5%9d%80%e7%9a%84%e4%b8%8d%e5%90%8c%e9%9b%b6%e5%a4%a7%e5%b0%8f%e5%8f%98%e9%87%8f>#</a></h2><ul><li>级别：中级</li></ul><p>如果你有两个不同的变量，它们不应该有不同的地址吗？好吧，Go 并不是这样：-） 如果变量大小为零，它们可能会在内存中共享完全相同的地址。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (
+  <span style=color:#e6db74>&#34;fmt&#34;</span>
+)
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>data</span> <span style=color:#66d9ef>struct</span> {
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+  <span style=color:#a6e22e>a</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>data</span>{}
+  <span style=color:#a6e22e>b</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>data</span>{}
+
+  <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>a</span> <span style=color:#f92672>==</span> <span style=color:#a6e22e>b</span> {
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;same address - a=%p b=%p\n&#34;</span>,<span style=color:#a6e22e>a</span>,<span style=color:#a6e22e>b</span>)
+    <span style=color:#75715e>//prints: same address - a=0x1953e4 b=0x1953e4
+</span><span style=color:#75715e></span>  }
+}
+</code></pre></div><h2 id=iota-的第一次使用并不总是从零开始>iota 的第一次使用并不总是从零开始
+<a class=anchor href=#iota-%e7%9a%84%e7%ac%ac%e4%b8%80%e6%ac%a1%e4%bd%bf%e7%94%a8%e5%b9%b6%e4%b8%8d%e6%80%bb%e6%98%af%e4%bb%8e%e9%9b%b6%e5%bc%80%e5%a7%8b>#</a></h2><ul><li>级别：中级</li></ul><p>它可能看起来像是一个 <code>iota</code> 标识符就像一个增量运算符。开始一个新的常量声明，第一次使用 iota 时得到 0，第二次使用时得到 1，依此类推。但情况并非总是如此。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (
+  <span style=color:#e6db74>&#34;fmt&#34;</span>
+)
+
+<span style=color:#66d9ef>const</span> (
+  <span style=color:#a6e22e>azero</span> = <span style=color:#66d9ef>iota</span>
+  <span style=color:#a6e22e>aone</span>  = <span style=color:#66d9ef>iota</span>
+)
+
+<span style=color:#66d9ef>const</span> (
+  <span style=color:#a6e22e>info</span>  = <span style=color:#e6db74>&#34;processing&#34;</span>
+  <span style=color:#a6e22e>bzero</span> = <span style=color:#66d9ef>iota</span>
+  <span style=color:#a6e22e>bone</span>  = <span style=color:#66d9ef>iota</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+  <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>azero</span>,<span style=color:#a6e22e>aone</span>) <span style=color:#75715e>//prints: 0 1
+</span><span style=color:#75715e></span>  <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>bzero</span>,<span style=color:#a6e22e>bone</span>) <span style=color:#75715e>//prints: 1 2
+</span><span style=color:#75715e></span>}
+</code></pre></div><p><code>iota</code> 实际上是常量声明块中当前行的索引运算符，因此，如果首次使用 <code>iota</code> 不是常量声明块中的第一行，则初始值将不为零。</p><h2 id=在值实例上使用指针接收器方法>在值实例上使用指针接收器方法
+<a class=anchor href=#%e5%9c%a8%e5%80%bc%e5%ae%9e%e4%be%8b%e4%b8%8a%e4%bd%bf%e7%94%a8%e6%8c%87%e9%92%88%e6%8e%a5%e6%94%b6%e5%99%a8%e6%96%b9%e6%b3%95>#</a></h2><ul><li>级别：高级</li></ul><p>只要该值是可寻址的，就可以在该值上调用指针接收器方法。换句话说，在某些情况下，你不需要该方法的值接收器版本。</p><p>但是，并非每个变量都是可寻址的。map 元素不可寻址。通过接口引用的变量也是不可寻址的。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>data</span> <span style=color:#66d9ef>struct</span> {  
+    <span style=color:#a6e22e>name</span> <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>p</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>data</span>) print() {  
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;name:&#34;</span>,<span style=color:#a6e22e>p</span>.<span style=color:#a6e22e>name</span>)
+}
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>printer</span> <span style=color:#66d9ef>interface</span> {  
+    print()
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>d1</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>data</span>{<span style=color:#e6db74>&#34;one&#34;</span>}
+    <span style=color:#a6e22e>d1</span>.print() <span style=color:#75715e>//ok
+</span><span style=color:#75715e></span>
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>in</span> <span style=color:#a6e22e>printer</span> = <span style=color:#a6e22e>data</span>{<span style=color:#e6db74>&#34;two&#34;</span>} <span style=color:#75715e>//error
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>in</span>.print()
+
+    <span style=color:#a6e22e>m</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#a6e22e>data</span> {<span style=color:#e6db74>&#34;x&#34;</span>:<span style=color:#a6e22e>data</span>{<span style=color:#e6db74>&#34;three&#34;</span>}}
+    <span style=color:#a6e22e>m</span>[<span style=color:#e6db74>&#34;x&#34;</span>].print() <span style=color:#75715e>//error
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>编译错误:</p><blockquote><p>/tmp/sandbox017696142/main.go:21: cannot use data literal （type data） as type printer in assignment: data does not implement printer （print method has pointer receiver）<br>/tmp/sandbox017696142/main.go:25: cannot call pointer method on m[&ldquo;x&rdquo;] /tmp/sandbox017696142/main.go:25: cannot take the address of m[&ldquo;x&rdquo;]</p></blockquote><h2 id=更新-map-值字段>更新 map 值字段
+<a class=anchor href=#%e6%9b%b4%e6%96%b0-map-%e5%80%bc%e5%ad%97%e6%ae%b5>#</a></h2><ul><li>级别：高级</li></ul><p>如果你具有结构值 map，则无法更新单个结构字段。</p><p>失败的范例:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>data</span> <span style=color:#66d9ef>struct</span> {  
+    <span style=color:#a6e22e>name</span> <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>m</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#a6e22e>data</span> {<span style=color:#e6db74>&#34;x&#34;</span>:{<span style=color:#e6db74>&#34;one&#34;</span>}}
+    <span style=color:#a6e22e>m</span>[<span style=color:#e6db74>&#34;x&#34;</span>].<span style=color:#a6e22e>name</span> = <span style=color:#e6db74>&#34;two&#34;</span> <span style=color:#75715e>//error
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>编译错误:</p><blockquote><p>/tmp/sandbox380452744/main.go:9: cannot assign to m[&ldquo;x&rdquo;].name</p></blockquote><p>它不会工作，因为 map 元素不可寻址。</p><p>对于 Go 新手开发者，可能会感到困惑，slice 元素是可寻址的。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>data</span> <span style=color:#66d9ef>struct</span> {  
+    <span style=color:#a6e22e>name</span> <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>s</span> <span style=color:#f92672>:=</span> []<span style=color:#a6e22e>data</span> {{<span style=color:#e6db74>&#34;one&#34;</span>}}
+    <span style=color:#a6e22e>s</span>[<span style=color:#ae81ff>0</span>].<span style=color:#a6e22e>name</span> = <span style=color:#e6db74>&#34;two&#34;</span> <span style=color:#75715e>//ok
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>s</span>)    <span style=color:#75715e>//prints: [{two}]
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>请注意，前一阵子可以在其中一个 Go 编译器 （gccgo） 中更新 map 元素字段，但是该行为很快得到解决:-） 它也被认为是 Go 1.3 的潜在功能。当时还不足以提供支持，因此它仍在待办事项清单上。</p><p>首先解决的是使用临时变量。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>data</span> <span style=color:#66d9ef>struct</span> {  
+    <span style=color:#a6e22e>name</span> <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>m</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#a6e22e>data</span> {<span style=color:#e6db74>&#34;x&#34;</span>:{<span style=color:#e6db74>&#34;one&#34;</span>}}
+    <span style=color:#a6e22e>r</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>m</span>[<span style=color:#e6db74>&#34;x&#34;</span>]
+    <span style=color:#a6e22e>r</span>.<span style=color:#a6e22e>name</span> = <span style=color:#e6db74>&#34;two&#34;</span>
+    <span style=color:#a6e22e>m</span>[<span style=color:#e6db74>&#34;x&#34;</span>] = <span style=color:#a6e22e>r</span>
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;%v&#34;</span>,<span style=color:#a6e22e>m</span>) <span style=color:#75715e>//prints: map[x:{two}]
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>另一个解决方法是使用指针映射。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>data</span> <span style=color:#66d9ef>struct</span> {  
+    <span style=color:#a6e22e>name</span> <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>m</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#f92672>*</span><span style=color:#a6e22e>data</span> {<span style=color:#e6db74>&#34;x&#34;</span>:{<span style=color:#e6db74>&#34;one&#34;</span>}}
+    <span style=color:#a6e22e>m</span>[<span style=color:#e6db74>&#34;x&#34;</span>].<span style=color:#a6e22e>name</span> = <span style=color:#e6db74>&#34;two&#34;</span> <span style=color:#75715e>//ok
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>m</span>[<span style=color:#e6db74>&#34;x&#34;</span>]) <span style=color:#75715e>//prints: &amp;{two}
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>顺便说一句，运行此代码会发生什么？</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>data</span> <span style=color:#66d9ef>struct</span> {  
+    <span style=color:#a6e22e>name</span> <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>m</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#f92672>*</span><span style=color:#a6e22e>data</span> {<span style=color:#e6db74>&#34;x&#34;</span>:{<span style=color:#e6db74>&#34;one&#34;</span>}}
+    <span style=color:#a6e22e>m</span>[<span style=color:#e6db74>&#34;z&#34;</span>].<span style=color:#a6e22e>name</span> = <span style=color:#e6db74>&#34;what?&#34;</span> <span style=color:#75715e>//???
+</span><span style=color:#75715e></span>}
+</code></pre></div><h2 id=nil接口和nil接口值>「nil」接口和「nil」接口值
+<a class=anchor href=#nil%e6%8e%a5%e5%8f%a3%e5%92%8cnil%e6%8e%a5%e5%8f%a3%e5%80%bc>#</a></h2><ul><li>级别：高级</li></ul><p>这是 Go 语言中第二常见的陷阱，因为即使接口看起来像指针，它们也不是指针。接口变量仅在其类型和值字段为「nil」时才为「nil」。</p><p>接口类型和值字段基于用于创建相应接口变量的变量的类型和值进行填充。当你尝试检查接口变量是否等于「nil」时，这可能导致意外的行为。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>data</span> <span style=color:#f92672>*</span><span style=color:#66d9ef>byte</span>
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>in</span> <span style=color:#66d9ef>interface</span>{}
+
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>data</span>,<span style=color:#a6e22e>data</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>nil</span>) <span style=color:#75715e>//prints: &lt;nil&gt; true
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>in</span>,<span style=color:#a6e22e>in</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>nil</span>)     <span style=color:#75715e>//prints: &lt;nil&gt; true
+</span><span style=color:#75715e></span>
+    <span style=color:#a6e22e>in</span> = <span style=color:#a6e22e>data</span>
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>in</span>,<span style=color:#a6e22e>in</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>nil</span>)     <span style=color:#75715e>//prints: &lt;nil&gt; false
+</span><span style=color:#75715e></span>    <span style=color:#75715e>//&#39;data&#39; is &#39;nil&#39;, but &#39;in&#39; is not &#39;nil&#39;
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>当你具有返回接口的函数时，请当心此陷阱。</p><p>错误的范例:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>doit</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>func</span>(<span style=color:#a6e22e>arg</span> <span style=color:#66d9ef>int</span>) <span style=color:#66d9ef>interface</span>{} {
+        <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>result</span> <span style=color:#f92672>*</span><span style=color:#66d9ef>struct</span>{} = <span style=color:#66d9ef>nil</span>
+
+        <span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>arg</span> &gt; <span style=color:#ae81ff>0</span>) {
+            <span style=color:#a6e22e>result</span> = <span style=color:#f92672>&amp;</span><span style=color:#66d9ef>struct</span>{}{}
+        }
+
+        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>result</span>
+    }
+
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>res</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>doit</span>(<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>); <span style=color:#a6e22e>res</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;good result:&#34;</span>,<span style=color:#a6e22e>res</span>) <span style=color:#75715e>//prints: good result: &lt;nil&gt;
+</span><span style=color:#75715e></span>        <span style=color:#75715e>//&#39;res&#39; is not &#39;nil&#39;, but its value is &#39;nil&#39;
+</span><span style=color:#75715e></span>    }
+}
+</code></pre></div><p>正确的范例：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>doit</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>func</span>(<span style=color:#a6e22e>arg</span> <span style=color:#66d9ef>int</span>) <span style=color:#66d9ef>interface</span>{} {
+        <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>result</span> <span style=color:#f92672>*</span><span style=color:#66d9ef>struct</span>{} = <span style=color:#66d9ef>nil</span>
+
+        <span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>arg</span> &gt; <span style=color:#ae81ff>0</span>) {
+            <span style=color:#a6e22e>result</span> = <span style=color:#f92672>&amp;</span><span style=color:#66d9ef>struct</span>{}{}
+        } <span style=color:#66d9ef>else</span> {
+            <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span> <span style=color:#75715e>//return an explicit &#39;nil&#39;
+</span><span style=color:#75715e></span>        }
+
+        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>result</span>
+    }
+
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>res</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>doit</span>(<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>); <span style=color:#a6e22e>res</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;good result:&#34;</span>,<span style=color:#a6e22e>res</span>)
+    } <span style=color:#66d9ef>else</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;bad result (res is nil)&#34;</span>) <span style=color:#75715e>//here as expected
+</span><span style=color:#75715e></span>    }
+}
+</code></pre></div><h2 id=堆栈和堆变量>堆栈和堆变量
+<a class=anchor href=#%e5%a0%86%e6%a0%88%e5%92%8c%e5%a0%86%e5%8f%98%e9%87%8f>#</a></h2><ul><li>级别：高级</li></ul><p>你并不总是知道你的变量是分配在堆栈还是堆上。在 C++ 中，使用 <code>new</code> 运算符创建变量始终意味着你具有堆变量。在 Go 语言中，即使使用 <code>new()</code> 或 <code>make()</code> 函数，编译器仍会决定将变量分配到何处。编译器根据变量的大小和「转义分析」的结果来选择存储变量的位置。这也意味着可以返回对局部变量的引用，而在其他语言 （如 C 或 C++） 中则不可以。</p><p>如果你需要知道变量的分配位置，请将「-m」gc 标志传递给「go build」或「go run」（例如，<code>go run -gcflags -m app.go</code>）。</p><h2 id=gomaxprocs并发和并行>GOMAXPROCS，并发和并行
+<a class=anchor href=#gomaxprocs%e5%b9%b6%e5%8f%91%e5%92%8c%e5%b9%b6%e8%a1%8c>#</a></h2><ul><li>级别：高级</li></ul><p>Go 1.4 以下版本仅使用一个执行上下文 / OS 线程。这意味着在任何给定时间只能执行一个 goroutine。从 Go 1.5 开始，将执行上下文的数量设置为 <code>runtime.NumCPU()</code> 返回的逻辑 CPU 内核的数量。该数字可能与系统上逻辑 CPU 内核的总数不匹配，具体取决于进程的 CPU 亲和力设置。你可以通过更改 <code>GOMAXPROCS</code> 环境变量或调用 <code>runtime.GOMAXPROCS()</code> 函数来调整此数字。</p><p>常见的误解是 <code>GOMAXPROCS</code> 代表 Go 将用于运行 goroutine 的 CPU 数量。<code>runtime.GOMAXPROCS()</code> 函数文档使这个问题更加混乱。<code>GOMAXPROCS</code> 变量描述 （
+<a href=https://golang.org/pkg/runtime/>golang.org/pkg/runtime/</a>） 在讨论 OS 线程方面做得更好。</p><p>你可以将 <code>GOMAXPROCS</code> 设置为大于 CPU 的数量。从 1.10 版开始，GOMAXPROCS 不再受限制。<code>GOMAXPROCS</code> 的最大值以前是 256，后来在 1.9 中增加到 1024。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;runtime&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>runtime</span>.<span style=color:#a6e22e>GOMAXPROCS</span>(<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>)) <span style=color:#75715e>//prints: X (1 on play.golang.org)
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>runtime</span>.<span style=color:#a6e22e>NumCPU</span>())       <span style=color:#75715e>//prints: X (1 on play.golang.org)
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>runtime</span>.<span style=color:#a6e22e>GOMAXPROCS</span>(<span style=color:#ae81ff>20</span>)
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>runtime</span>.<span style=color:#a6e22e>GOMAXPROCS</span>(<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>)) <span style=color:#75715e>//prints: 20
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>runtime</span>.<span style=color:#a6e22e>GOMAXPROCS</span>(<span style=color:#ae81ff>300</span>)
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>runtime</span>.<span style=color:#a6e22e>GOMAXPROCS</span>(<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>)) <span style=color:#75715e>//prints: 256
+</span><span style=color:#75715e></span>}
+</code></pre></div><h2 id=读写操作重新排序>读写操作重新排序
+<a class=anchor href=#%e8%af%bb%e5%86%99%e6%93%8d%e4%bd%9c%e9%87%8d%e6%96%b0%e6%8e%92%e5%ba%8f>#</a></h2><ul><li>级别：高级</li></ul><p>Go 可以对某些操作进行重新排序，但可以确保 goroutine 中发生该行为的整体行为不会改变。但是，它不能保证跨多个 goroutine 的执行顺序。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;runtime&#34;</span>
+    <span style=color:#e6db74>&#34;time&#34;</span>
+)
+
+<span style=color:#66d9ef>var</span> <span style=color:#a6e22e>_</span> = <span style=color:#a6e22e>runtime</span>.<span style=color:#a6e22e>GOMAXPROCS</span>(<span style=color:#ae81ff>3</span>)
+
+<span style=color:#66d9ef>var</span> <span style=color:#a6e22e>a</span>, <span style=color:#a6e22e>b</span> <span style=color:#66d9ef>int</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>u1</span>() {  
+    <span style=color:#a6e22e>a</span> = <span style=color:#ae81ff>1</span>
+    <span style=color:#a6e22e>b</span> = <span style=color:#ae81ff>2</span>
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>u2</span>() {  
+    <span style=color:#a6e22e>a</span> = <span style=color:#ae81ff>3</span>
+    <span style=color:#a6e22e>b</span> = <span style=color:#ae81ff>4</span>
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>p</span>() {  
+    println(<span style=color:#a6e22e>a</span>)
+    println(<span style=color:#a6e22e>b</span>)
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#66d9ef>go</span> <span style=color:#a6e22e>u1</span>()
+    <span style=color:#66d9ef>go</span> <span style=color:#a6e22e>u2</span>()
+    <span style=color:#66d9ef>go</span> <span style=color:#a6e22e>p</span>()
+    <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Sleep</span>(<span style=color:#ae81ff>1</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
+}
+</code></pre></div><p>如果你多次运行此代码，则可能会看到以下 <code>a</code> 和 <code>b</code> 变量组合：</p><blockquote><p>1<br>2</p><p>3<br>4</p><p>0<br>2</p><p>0<br>0</p><p>1<br>4</p></blockquote><p><code>a</code> 和 <code>b</code> 最有趣的组合是「02」。它显示 <code>b</code> 已在 <code>a</code> 之前更新。</p><p>如果你需要跨多个 goroutine 保留读取和写入操作的顺序，则需要使用通道或「sync」包中的适当的方法。</p><h2 id=抢占式调度>抢占式调度
+<a class=anchor href=#%e6%8a%a2%e5%8d%a0%e5%bc%8f%e8%b0%83%e5%ba%a6>#</a></h2><ul><li>级别：高级</li></ul><p>可能有一个流氓 goroutine 阻止了其他 goroutine 的运行。如果你的 <code>for</code> 循环不允许调度程序运行，则可能发生这种情况。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>done</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>false</span>
+
+    <span style=color:#66d9ef>go</span> <span style=color:#66d9ef>func</span>(){
+        <span style=color:#a6e22e>done</span> = <span style=color:#66d9ef>true</span>
+    }()
+
+    <span style=color:#66d9ef>for</span> !<span style=color:#a6e22e>done</span> {
+    }
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;done!&#34;</span>)
+}
+</code></pre></div><p><code>for</code> 循环不必为空。只要它包含不触发调度程序执行的代码，这将是一个问题。</p><p>调度程序将在 GC，“go” 语句，阻塞通道操作，阻塞系统调用和锁定操作之后运行。当调用非内联函数时，它也可能运行。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>done</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>false</span>
+
+    <span style=color:#66d9ef>go</span> <span style=color:#66d9ef>func</span>(){
+        <span style=color:#a6e22e>done</span> = <span style=color:#66d9ef>true</span>
+    }()
+
+    <span style=color:#66d9ef>for</span> !<span style=color:#a6e22e>done</span> {
+        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;not done!&#34;</span>) <span style=color:#75715e>//not inlined
+</span><span style=color:#75715e></span>    }
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;done!&#34;</span>)
+}
+</code></pre></div><p>要查明你在 <code>for</code> 循环中调用的函数是否内联，请将 “-m” gc 标志传递给 “ go build” 或 “ go run”（例如，<code>go build -gcflags -m</code>）。</p><p>另一种选择是显式调用调度程序。你可以使用 “运行时” 包中的 <code>Gosched()</code> 函数来完成此操作。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (  
+    <span style=color:#e6db74>&#34;fmt&#34;</span>
+    <span style=color:#e6db74>&#34;runtime&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {  
+    <span style=color:#a6e22e>done</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>false</span>
+
+    <span style=color:#66d9ef>go</span> <span style=color:#66d9ef>func</span>(){
+        <span style=color:#a6e22e>done</span> = <span style=color:#66d9ef>true</span>
+    }()
+
+    <span style=color:#66d9ef>for</span> !<span style=color:#a6e22e>done</span> {
+        <span style=color:#a6e22e>runtime</span>.<span style=color:#a6e22e>Gosched</span>()
+    }
+    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;done!&#34;</span>)
+}
+</code></pre></div><p>请注意，上面的代码包含一个竞争条件。这样做是故意显示出隐藏的陷阱。</p><h2 id=导入-c-和多行导入块>导入 C 和多行导入块
+<a class=anchor href=#%e5%af%bc%e5%85%a5-c-%e5%92%8c%e5%a4%9a%e8%a1%8c%e5%af%bc%e5%85%a5%e5%9d%97>#</a></h2><ul><li>级别：Cgo</li></ul><p>你需要导入 “C” 包才能使用 Cgo。你可以单行 <code>import</code> 进行此操作，也可以使用 <code>import</code> 块进行此操作。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#75715e>/*
+</span><span style=color:#75715e>#include &lt;stdlib.h&gt;
+</span><span style=color:#75715e>*/</span>
+<span style=color:#f92672>import</span> (
+  <span style=color:#e6db74>&#34;C&#34;</span>
+)
+
+<span style=color:#f92672>import</span> (
+  <span style=color:#e6db74>&#34;unsafe&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+  <span style=color:#a6e22e>cs</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>C</span>.<span style=color:#a6e22e>CString</span>(<span style=color:#e6db74>&#34;my go string&#34;</span>)
+  <span style=color:#a6e22e>C</span>.<span style=color:#a6e22e>free</span>(<span style=color:#a6e22e>unsafe</span>.<span style=color:#a6e22e>Pointer</span>(<span style=color:#a6e22e>cs</span>))
+}
+</code></pre></div><p>如果以 <code>import</code> 块的方式引入此包 ，则无法在同一个块中引入其他包。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#75715e>/*
+</span><span style=color:#75715e>#include &lt;stdlib.h&gt;
+</span><span style=color:#75715e>*/</span>
+<span style=color:#f92672>import</span> (
+  <span style=color:#e6db74>&#34;C&#34;</span>
+  <span style=color:#e6db74>&#34;unsafe&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+  <span style=color:#a6e22e>cs</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>C</span>.<span style=color:#a6e22e>CString</span>(<span style=color:#e6db74>&#34;my go string&#34;</span>)
+  <span style=color:#a6e22e>C</span>.<span style=color:#a6e22e>free</span>(<span style=color:#a6e22e>unsafe</span>.<span style=color:#a6e22e>Pointer</span>(<span style=color:#a6e22e>cs</span>))
+}
+</code></pre></div><p>编译错误：</p><blockquote><p>./main.go:13:2: could not determine kind of name for C.free</p></blockquote><h2 id=在-c-和-cgo-注释之间不要有空白行>在 C 和 Cgo 注释之间不要有空白行
+<a class=anchor href=#%e5%9c%a8-c-%e5%92%8c-cgo-%e6%b3%a8%e9%87%8a%e4%b9%8b%e9%97%b4%e4%b8%8d%e8%a6%81%e6%9c%89%e7%a9%ba%e7%99%bd%e8%a1%8c>#</a></h2><ul><li>级别: Cgo</li></ul><p>Cgo 的第一个陷阱是：cgo 注释需位于 <code>import C</code> 声明的上方。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#75715e>/*
+</span><span style=color:#75715e>#include &lt;stdlib.h&gt;
+</span><span style=color:#75715e>*/</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;C&#34;</span>
+
+<span style=color:#f92672>import</span> (
+  <span style=color:#e6db74>&#34;unsafe&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+  <span style=color:#a6e22e>cs</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>C</span>.<span style=color:#a6e22e>CString</span>(<span style=color:#e6db74>&#34;my go string&#34;</span>)
+  <span style=color:#a6e22e>C</span>.<span style=color:#a6e22e>free</span>(<span style=color:#a6e22e>unsafe</span>.<span style=color:#a6e22e>Pointer</span>(<span style=color:#a6e22e>cs</span>))
+}
+</code></pre></div><p>编译错误：</p><blockquote><p>./main.go:15:2: could not determine kind of name for C.free</p></blockquote><p>确保在 <code>import C</code> 声明前没有任何空白行。</p><h2 id=不能调用带有可变参数的-c-函数>不能调用带有可变参数的 C 函数
+<a class=anchor href=#%e4%b8%8d%e8%83%bd%e8%b0%83%e7%94%a8%e5%b8%a6%e6%9c%89%e5%8f%af%e5%8f%98%e5%8f%82%e6%95%b0%e7%9a%84-c-%e5%87%bd%e6%95%b0>#</a></h2><ul><li>level: Cgo</li></ul><p>你不能直接调用带有可变参数的 C 函数</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#75715e>/*
+</span><span style=color:#75715e>#include &lt;stdio.h&gt;
+</span><span style=color:#75715e>#include &lt;stdlib.h&gt;
+</span><span style=color:#75715e>*/</span>
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;C&#34;</span>
+
+<span style=color:#f92672>import</span> (
+  <span style=color:#e6db74>&#34;unsafe&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+  <span style=color:#a6e22e>cstr</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>C</span>.<span style=color:#a6e22e>CString</span>(<span style=color:#e6db74>&#34;go&#34;</span>)
+  <span style=color:#a6e22e>C</span>.<span style=color:#a6e22e>printf</span>(<span style=color:#e6db74>&#34;%s\n&#34;</span>,<span style=color:#a6e22e>cstr</span>) <span style=color:#75715e>//not ok
+</span><span style=color:#75715e></span>  <span style=color:#a6e22e>C</span>.<span style=color:#a6e22e>free</span>(<span style=color:#a6e22e>unsafe</span>.<span style=color:#a6e22e>Pointer</span>(<span style=color:#a6e22e>cstr</span>))
+}
+</code></pre></div><p>编译错误:</p><blockquote><p>./main.go:15:2: unexpected type: &mldr;</p></blockquote><p>你需要用已知数量参数的函数封装 C 可变数量参数的函数</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#75715e>/*
+</span><span style=color:#75715e>#include &lt;stdio.h&gt;
+</span><span style=color:#75715e>#include &lt;stdlib.h&gt;
+</span><span style=color:#75715e>
+</span><span style=color:#75715e>void out(char* in) {
+</span><span style=color:#75715e>  printf(&#34;%s\n&#34;, in);
+</span><span style=color:#75715e>}
+</span><span style=color:#75715e>*/</span>
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;C&#34;</span>
+
+<span style=color:#f92672>import</span> (
+  <span style=color:#e6db74>&#34;unsafe&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+  <span style=color:#a6e22e>cstr</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>C</span>.<span style=color:#a6e22e>CString</span>(<span style=color:#e6db74>&#34;go&#34;</span>)
+  <span style=color:#a6e22e>C</span>.<span style=color:#a6e22e>out</span>(<span style=color:#a6e22e>cstr</span>) <span style=color:#75715e>//ok
+</span><span style=color:#75715e></span>  <span style=color:#a6e22e>C</span>.<span style=color:#a6e22e>free</span>(<span style=color:#a6e22e>unsafe</span>.<span style=color:#a6e22e>Pointer</span>(<span style=color:#a6e22e>cstr</span>))
+}
+</code></pre></div></article><div class="book-footer justify-between"></div><hr style=height:1px;background:var(--gray-200)><br><p>本图书由<a href=https://github.com/minibear2333>小熊</a>©2021 版权所有，<a href=https://golang.coding3min.com/>所有文章</a>采用<a href=https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh>知识署名-非商业性使用-禁止演绎 4.0 国际</a>进行许可。</p><div style=text-align:center><p><img width=70% style=width:70%;height:70%;!important src=https://coding3min.oss-accelerate.aliyuncs.com/2021/06/24/qrcode.png></p></div><script src=https://utteranc.es/client.js repo=minibear2333/blog-comment issue-term=title theme=github-light crossorigin=anonymous async></script><footer class=book-footer><div class="flex flex-wrap justify-between"><div><a class="flex align-center" href=https://github.com/golang-minibear2333/golang/edit/master/./impossible/%e8%bf%9b%e9%98%b6%e5%b8%b8%e7%8a%af%e7%9a%84%e9%94%99%e8%af%af.md target=_blank rel=noopener><img src=/svg/edit.svg class=book-icon alt=Edit>
+<span>Edit this page</span></a></div></div><script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script></footer><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#关闭-http-响应-body>关闭 HTTP 响应 Body</a></li><li><a href=#关闭-http-连接>关闭 HTTP 连接</a></li><li><a href=#json-编码器添加换行符>JSON 编码器添加换行符</a></li><li><a href=#json-包在键和字符串值中转义特殊的-html-字符>JSON 包在键和字符串值中转义特殊的 HTML 字符</a></li><li><a href=#将-json-数字解组为接口值>将 JSON 数字解组为接口值</a></li><li><a href=#十六进制或其他非-utf8json-字符串转义的值不正确>十六进制或其他非 UTF8JSON 字符串转义的值不正确</a></li><li><a href=#比较结构体--数组--切片--map>比较结构体 / 数组 / 切片 / Map</a></li><li><a href=#从-panic-中恢复>从 Panic 中恢复</a></li><li><a href=#使用或更新切片--数组--map-rnage-遍历的数据>使用或更新切片 / 数组 / Map Rnage 遍历的数据</a></li><li><a href=#切片的隐藏数据>切片的隐藏数据</a></li><li><a href=#切片数据污染>切片数据污染</a></li><li><a href=#旧的切片>旧的切片</a></li><li><a href=#类型声明和方法>类型声明和方法</a></li><li><a href=#突破-for-switch-和--for-select-代码块>突破 “for switch” 和 “ for select” 代码块</a></li><li><a href=#句中的迭代变量和闭包>句中的迭代变量和闭包</a></li><li><a href=#延迟函数调用参数评估>延迟函数调用参数评估</a></li><li><a href=#延迟函数调用执行>延迟函数调用执行</a></li><li><a href=#失败类型断言>失败类型断言</a></li><li><a href=#阻塞的-goroutines-和资源泄漏>阻塞的 Goroutines 和资源泄漏</a></li><li><a href=#相同地址的不同零大小变量>相同地址的不同零大小变量</a></li><li><a href=#iota-的第一次使用并不总是从零开始>iota 的第一次使用并不总是从零开始</a></li><li><a href=#在值实例上使用指针接收器方法>在值实例上使用指针接收器方法</a></li><li><a href=#更新-map-值字段>更新 map 值字段</a></li><li><a href=#nil接口和nil接口值>「nil」接口和「nil」接口值</a></li><li><a href=#堆栈和堆变量>堆栈和堆变量</a></li><li><a href=#gomaxprocs并发和并行>GOMAXPROCS，并发和并行</a></li><li><a href=#读写操作重新排序>读写操作重新排序</a></li><li><a href=#抢占式调度>抢占式调度</a></li><li><a href=#导入-c-和多行导入块>导入 C 和多行导入块</a></li><li><a href=#在-c-和-cgo-注释之间不要有空白行>在 C 和 Cgo 注释之间不要有空白行</a></li><li><a href=#不能调用带有可变参数的-c-函数>不能调用带有可变参数的 C 函数</a></li></ul></nav></div></aside></main></body></html>
